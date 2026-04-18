@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.875rem;
+
+    /* EvoTree — Ethereal Cyber-Forest palette */
+    --background: oklch(0.14 0.03 180);
+    --background-deep: oklch(0.09 0.025 190);
+    --background-elev: oklch(0.18 0.035 185);
+    --foreground: oklch(0.95 0.02 160);
+
+    --card: oklch(0.17 0.035 188);
+    --card-foreground: oklch(0.95 0.02 160);
+    --popover: oklch(0.16 0.035 188);
+    --popover-foreground: oklch(0.96 0.02 160);
+
+    /* Bioluminescent primary — neon mint/cyan */
+    --primary: oklch(0.85 0.19 165);
+    --primary-foreground: oklch(0.12 0.04 190);
+    --primary-glow: oklch(0.88 0.22 168);
+
+    /* Accent — electric violet petal */
+    --accent: oklch(0.72 0.24 305);
+    --accent-foreground: oklch(0.98 0.01 0);
+    --accent-glow: oklch(0.78 0.27 305);
+
+    /* Secondary — deep teal */
+    --secondary: oklch(0.24 0.06 195);
+    --secondary-foreground: oklch(0.94 0.03 165);
+
+    --muted: oklch(0.21 0.04 190);
+    --muted-foreground: oklch(0.68 0.04 175);
+
+    --destructive: oklch(0.65 0.24 25);
+    --destructive-foreground: oklch(0.98 0.01 0);
+
+    --border: oklch(0.32 0.06 185 / 0.5);
+    --input: oklch(0.28 0.05 188);
+    --ring: oklch(0.85 0.19 165);
+
+    /* Bio data palette */
+    --bio-1: oklch(0.86 0.2 155);   /* mint */
+    --bio-2: oklch(0.82 0.22 195);  /* cyan */
+    --bio-3: oklch(0.75 0.24 280);  /* indigo */
+    --bio-4: oklch(0.78 0.26 320);  /* magenta */
+    --bio-5: oklch(0.88 0.2 95);    /* spore yellow */
+
+    --chart-1: var(--bio-1);
+    --chart-2: var(--bio-2);
+    --chart-3: var(--bio-3);
+    --chart-4: var(--bio-4);
+    --chart-5: var(--bio-5);
+
+    --sidebar: oklch(0.12 0.03 188);
+    --sidebar-foreground: oklch(0.94 0.02 160);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: oklch(0.12 0.04 190);
+    --sidebar-accent: oklch(0.2 0.04 190);
+    --sidebar-accent-foreground: oklch(0.94 0.02 160);
+    --sidebar-border: oklch(0.3 0.05 185 / 0.4);
+    --sidebar-ring: var(--primary);
+
+    /* Gradients & glows */
+    --gradient-canvas: radial-gradient(
+        ellipse 80% 60% at 50% 100%,
+        oklch(0.22 0.08 175 / 0.6) 0%,
+        transparent 70%
+      ),
+      radial-gradient(ellipse 60% 50% at 50% 0%, oklch(0.18 0.06 290 / 0.35) 0%, transparent 70%),
+      linear-gradient(180deg, oklch(0.1 0.03 195) 0%, oklch(0.08 0.025 200) 100%);
+    --gradient-panel: linear-gradient(
+      180deg,
+      oklch(0.18 0.035 188) 0%,
+      oklch(0.15 0.03 192) 100%
+    );
+    --gradient-bio: linear-gradient(135deg, var(--bio-2), var(--bio-3), var(--bio-4));
+
+    --glow-primary: 0 0 24px oklch(0.85 0.19 165 / 0.55), 0 0 60px oklch(0.85 0.19 165 / 0.25);
+    --glow-accent: 0 0 24px oklch(0.78 0.27 305 / 0.55), 0 0 60px oklch(0.78 0.27 305 / 0.25);
+    --glow-soft: 0 0 0 1px oklch(0.85 0.19 165 / 0.18), 0 8px 40px oklch(0.85 0.19 165 / 0.08);
+
+    --shadow-panel: 0 1px 0 oklch(1 0 0 / 0.04) inset, 0 0 0 1px oklch(0.85 0.19 165 / 0.1),
+      0 30px 60px -30px oklch(0 0 0 / 0.6);
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background: var(--gradient-canvas);
+    color: var(--foreground);
+    @apply font-display;
+    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .panel {
+    background: var(--gradient-panel);
+    box-shadow: var(--shadow-panel);
+    border: 1px solid oklch(0.85 0.19 165 / 0.12);
+    border-radius: var(--radius);
+  }
+  .glow-primary {
+    box-shadow: var(--glow-primary);
+  }
+  .glow-accent {
+    box-shadow: var(--glow-accent);
+  }
+  .text-glow {
+    text-shadow: 0 0 12px oklch(0.85 0.19 165 / 0.7);
+  }
+  .text-glow-accent {
+    text-shadow: 0 0 12px oklch(0.78 0.27 305 / 0.7);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate3d(var(--dx, 40px), var(--dy, -120px), 0);
+    opacity: 0;
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 16px currentColor);
+  }
+  50% {
+    filter: drop-shadow(0 0 12px currentColor) drop-shadow(0 0 28px currentColor);
+  }
+}
