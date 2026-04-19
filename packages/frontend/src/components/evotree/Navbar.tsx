@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LinkNext from "next/link";
 import { usePathname } from "next/navigation";
-import { Wallet, Copy, Check, Menu, X, MoreVertical } from "lucide-react";
+import { Wallet, X, MoreVertical } from "lucide-react";
 
 const navLinks = [
   { label: "Dashboard", href: "/" },
@@ -17,20 +17,7 @@ export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [connected, setConnected] = useState(false);
-  const [copied, setCopied] = useState(false);
-  
-  const address = "0x7a2f4d8b9c1e3f5a6b8d0c2e4f6a8b4e9";
   const shortAddress = "0x7a2f…b4e9";
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* noop */
-    }
-  };
 
   return (
     <header className="sticky top-0 z-[100] w-full border-b border-white/10 bg-background-deep/70 backdrop-blur-md">

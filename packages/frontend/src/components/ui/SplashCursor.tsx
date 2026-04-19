@@ -1,36 +1,12 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-function SplashCursor({
-  SIM_RESOLUTION = 128,
-  DYE_RESOLUTION = 1440,
-  CAPTURE_RESOLUTION = 512,
-  DENSITY_DISSIPATION = 3.5,
-  VELOCITY_DISSIPATION = 2,
-  PRESSURE = 0.1,
-  PRESSURE_ITERATIONS = 20,
-  CURL = 3,
-  SPLAT_RADIUS = 0.2,
-  SPLAT_FORCE = 6000,
-  SHADING = true,
-  COLOR_UPDATE_SPEED = 10,
+export default function SplashCursor({
   BACK_COLOR = { r: 5, g: 5, b: 5 }, // Cyber background base
   TRANSPARENT = true,
   COLORFUL = false, // Set colorful to true for multi-color or false to use defined color
   PRIMARY_COLOR = { r: 0.0, g: 1.0, b: 0.8 }, // Cyberpunk Cyan/Emerald
 }: {
-  SIM_RESOLUTION?: number;
-  DYE_RESOLUTION?: number;
-  CAPTURE_RESOLUTION?: number;
-  DENSITY_DISSIPATION?: number;
-  VELOCITY_DISSIPATION?: number;
-  PRESSURE?: number;
-  PRESSURE_ITERATIONS?: number;
-  CURL?: number;
-  SPLAT_RADIUS?: number;
-  SPLAT_FORCE?: number;
-  SHADING?: boolean;
-  COLOR_UPDATE_SPEED?: number;
   BACK_COLOR?: { r: number; g: number; b: number };
   TRANSPARENT?: boolean;
   COLORFUL?: boolean;
@@ -83,7 +59,7 @@ function SplashCursor({
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         ctx.beginPath();
-        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+
         const colorBase = COLORFUL
           ? `hsla(${p.hue}, 100%, 50%, ${p.alpha})`
           : `rgba(${PRIMARY_COLOR.r * 255}, ${PRIMARY_COLOR.g * 255}, ${PRIMARY_COLOR.b * 255}, ${p.alpha})`;
@@ -162,6 +138,6 @@ function SplashCursor({
   );
 }
 
-export default SplashCursor;
+
 
 

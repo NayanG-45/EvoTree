@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 import './TiltedCard.css';
 
@@ -57,7 +57,7 @@ export default function TiltedCard({
     mass: 1,
   });
 
-  const [isHovered, setIsHovered] = useState(false);
+
 
   function handleMouse(e: React.MouseEvent<HTMLDivElement>) {
     if (!ref.current) return;
@@ -78,13 +78,13 @@ export default function TiltedCard({
   }
 
   function handleMouseEnter() {
-    setIsHovered(true);
+
     scale.set(scaleOnHover);
     opacity.set(1);
   }
 
   function handleMouseLeave() {
-    setIsHovered(false);
+
     opacity.set(0);
     scale.set(1);
     rotateX.set(0);

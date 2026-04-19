@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { gsap } from 'gsap';
 import './MagicCard.css';
 
@@ -215,7 +215,7 @@ export function MagicCard({
     <div
       ref={cardRef}
       className={`magic-card ${enableBorderGlow ? 'magic-card--border-glow' : ''} ${className}`}
-      style={{ '--glow-color': glowColor } as any}
+      style={{ '--glow-color': glowColor } as React.CSSProperties}
     >
       {children}
     </div>

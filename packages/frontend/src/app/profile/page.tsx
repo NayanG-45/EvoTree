@@ -141,10 +141,10 @@ export default function ProfilePage() {
         setHasProfile(true);
         setShowDashboard(true);
       }, 3000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Supabase Upsert Error:", error);
       setStatus("error");
-      setMessage(error.message || "Failed to save profile.");
+      setMessage((error as Error).message || "Failed to save profile.");
     }
   };
 

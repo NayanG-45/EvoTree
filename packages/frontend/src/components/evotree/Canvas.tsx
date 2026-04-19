@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, useMemo, type MouseEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Layers, Zap, Maximize2, Filter, Eye, EyeOff, Minus, Plus, RotateCcw, X } from "lucide-react";
+import { Zap, Filter, Eye, EyeOff, Minus, Plus, RotateCcw, X } from "lucide-react";
 import { Particles } from "./Particles";
 import { Tree, NODES } from "./Tree";
 
@@ -51,7 +51,7 @@ export function Canvas() {
   })();
 
   const categories = useMemo(() => {
-    return ["all", ...new Set(NODES.map((n) => n.category.split(" ")[0]))];
+    return ["all", ...Array.from(new Set(NODES.map((n) => n.category.split(" ")[0])))];
   }, []);
 
   return (
@@ -133,7 +133,7 @@ export function Canvas() {
                        <p className="text-[9px] font-mono uppercase tracking-[0.25em] text-slate-500">Neural Domains</p>
                      </div>
                      <div className="flex flex-col gap-1 text-left">
-                       {categories.map((cat, i) => (
+                       {categories.map((cat) => (
                          <button
                            key={cat}
                            onClick={() => { setActiveFilter(cat); setShowFilters(false); }}

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Activity, Brain, GitBranch, Cpu, Sparkles, TrendingUp, TrendingDown, ChevronRight, X } from "lucide-react";
+import { Activity, Brain, GitBranch, Cpu, Sparkles, TrendingUp, TrendingDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MagicCard } from "@/components/animations/MagicCard";
 
@@ -137,7 +137,7 @@ export function Sidebar() {
 
       {/* Stats */}
       <div className="flex flex-col gap-2.5">
-        {stats.map((s, i) => {
+        {stats.map((s) => {
           const isExpanded = expanded === s.id;
           return (
             <MagicCard

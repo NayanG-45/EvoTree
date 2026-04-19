@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { Wallet, Link, TrendingUp, Activity, Zap, Cpu, GitBranch } from "lucide-react";
+import { Wallet, Link, TrendingUp, Zap, Cpu, GitBranch } from "lucide-react";
 import LinkNext from "next/link";
 import { Navbar } from "@/components/evotree/Navbar";
 import { Footer } from "@/components/evotree/Footer";
@@ -60,7 +60,7 @@ const features = [
   },
 ];
 
-const TiltCard = ({ step, index }: { step: any; index: number }) => {
+const TiltCard = ({ step, index }: { step: { icon: React.ElementType, title: string, desc: string, color: string }; index: number }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
