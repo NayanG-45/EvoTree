@@ -1,11 +1,11 @@
 "use client";
 import { motion } from "framer-motion";
-import { Camera, MessageSquare, Video, Mail, Phone } from "lucide-react";
+import { Camera, MessageSquare, Video, Mail, Phone, Globe, Shield, Scale } from "lucide-react";
 
 const legalLinks = [
-  { label: "Terms & Conditions", href: "#" },
-  { label: "Privacy Policy", href: "#" },
-  { label: "Copyright Act", href: "#" },
+  { label: "Terms & Conditions", href: "#", icon: Scale },
+  { label: "Privacy Policy", href: "#", icon: Shield },
+  { label: "Copyright Act", href: "#", icon: Globe },
 ];
 
 const socialLinks = [
@@ -17,20 +17,17 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="w-full border-t border-white/10 bg-background-deep/80 backdrop-blur-sm">
-      <div className="mx-auto w-full max-w-[1600px] px-[clamp(1rem,3vw,2rem)] py-[clamp(1rem,2vh,1.5rem)]">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-4">
-          {/* Column 1: Brand */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col items-start gap-2"
-          >
+    <footer className="w-full border-t border-emerald-500/20 bg-[#0a0a0a] p-12 overflow-hidden">
+      <div className="mx-auto w-full max-w-[1600px] flex flex-col gap-12">
+        
+        {/* Unified Main Section */}
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-10">
+          
+          {/* Brand & Identity */}
+          <div className="flex items-center gap-2.5 shrink-0">
             <div
-              className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-primary/30 flex items-center justify-center bg-transparent"
-              style={{ boxShadow: "0 0 12px oklch(0.85 0.19 165 / 0.3)" }}
+              className="relative h-11 w-11 overflow-hidden rounded-full ring-1 ring-primary/40 flex items-center justify-center bg-transparent"
+              style={{ boxShadow: "0 0 16px oklch(0.85 0.19 165 / 0.45)" }}
             >
               <img
                 src="/evotree-logo.png"
@@ -40,75 +37,59 @@ export function Footer() {
                 draggable={false}
               />
             </div>
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text font-display text-base font-bold text-transparent">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text font-display text-3xl font-bold tracking-tight text-transparent block">
               EvoTree
             </span>
-            <p className="font-mono text-[11px] text-slate-400">
-              Powered by Branch.gg
-            </p>
-          </motion.div>
+          </div>
 
-          {/* Column 2: Legal */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.05 }}
-            className="flex flex-col items-start gap-1.5"
-          >
-            <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
-              Legal
-            </p>
+          {/* Legal Links - Center Row */}
+          <div className="flex flex-wrap items-center gap-x-12 gap-y-4">
             {legalLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="font-mono text-[12px] text-slate-400 transition-all duration-300 hover:-translate-y-[1px] hover:text-emerald-400"
+                className="flex items-center gap-2.5 font-mono text-[13px] uppercase tracking-[0.12em] text-slate-400 transition-all hover:text-emerald-400"
               >
+                <link.icon className="h-4 w-4 opacity-50 shrink-0" />
                 {link.label}
               </a>
             ))}
-          </motion.div>
+          </div>
 
-          {/* Column 3: Contact & Socials */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-            className="flex flex-col items-start gap-2 sm:items-end"
-          >
-            <p className="mb-0.5 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
-              Connect
-            </p>
-            <div className="flex items-center gap-2">
+          {/* Right Cluster: Socials & Contact */}
+          <div className="flex flex-col items-start xl:items-end gap-4 shrink-0">
+            <div className="flex items-center gap-3">
               {socialLinks.map((social) => (
                 <motion.a
                   key={social.label}
                   href={social.href}
-                  whileHover={{ y: -2, scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                  className="group grid h-8 w-8 place-items-center rounded-lg bg-white/5 transition-all duration-300 hover:bg-emerald-400/10 hover:shadow-[0_0_14px_rgba(52,211,153,0.3)]"
+                  whileHover={{ y: -2, scale: 1.1 }}
+                  className="group grid h-10 w-10 place-items-center rounded-xl bg-white/5 border border-white/5 transition-all hover:border-emerald-500/30 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]"
                   aria-label={social.label}
                 >
-                  <social.icon className="h-3.5 w-3.5 text-slate-400 transition-colors duration-300 group-hover:text-emerald-400" />
+                  <social.icon className="h-4 w-4 text-slate-400 group-hover:text-emerald-400 transition-colors" />
                 </motion.a>
               ))}
             </div>
-            <div className="flex items-center gap-1.5 font-mono text-[11px] text-slate-400 transition-colors duration-300 hover:text-emerald-400">
-              <Phone className="h-3 w-3" />
+            <div className="flex items-center gap-2.5 font-mono text-[11px] text-slate-500 transition-colors hover:text-emerald-400 cursor-pointer">
+              <Phone className="h-3.5 w-3.5 shrink-0" />
               <span>+91 98765 43210</span>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Bottom Banner */}
-        <div className="mt-4 border-t border-white/5 pt-3 text-center">
-          <p className="font-mono text-[10px] tracking-wide text-slate-500">
-            Built for Hackofiesta 7.0 | Live On-Chain Data
-          </p>
+        {/* Root Metadata */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-slate-600 uppercase tracking-[0.2em] border-t border-white/5 pt-8">
+          <p>© 2026 EVOTREE PROTOCOL // BRANCH.GG ECOSYSTEM</p>
+          <div className="flex items-center gap-4">
+             <span className="h-1 w-1 rounded-full bg-emerald-500/40" />
+             <p>Built for Hackofiesta 7.0</p>
+             <span className="h-1 w-1 rounded-full bg-emerald-500/40" />
+             <p>v3.2.0-stable</p>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
+
