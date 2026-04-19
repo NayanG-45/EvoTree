@@ -1,57 +1,72 @@
-# Sample Hardhat 3 Beta Project (`node:test` and `viem`)
+# 🌿 EvoTree: The Living Digital Organism
 
-This project showcases a Hardhat 3 Beta project using the native Node.js test runner (`node:test`) and the `viem` library for Ethereum interactions.
+**EvoTree** is a high-fidelity, bioluminescent developer reputation platform. It transforms fragmented data from GitHub and competitive programming sites into a unified, 3D interactive "EvoTree"—a digital organism that grows and evolves in real-time as you master your craft.
 
-To learn more about the Hardhat 3 Beta, please visit the [Getting Started guide](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3). To share your feedback, join our [Hardhat 3 Beta](https://hardhat.org/hardhat3-beta-telegram-group) Telegram group or [open an issue](https://github.com/NomicFoundation/hardhat/issues/new) in our GitHub issue tracker.
+---
 
-## Project Overview
+## 🚩 Problem Statement
+Traditional resumes are static, easily fabricated, and fail to capture the real-time "living" nature of a developer's growth. Verifiable technical proof is scattered across multiple platforms (GitHub, Codeforces, LeetCode), making it difficult for recruiters to grasp a developer's true potential and consistency in a single glance.
 
-This example project includes:
+## 💡 The Solution
+EvoTree solves this by:
+- **Neural Synthesis:** Aggregating real-time data from disparate coding platforms into a single interactive 3D tree.
+- **The Crucible:** Authenticating skills through AI-powered testing arenas that generate dynamic challenges based on real-time developer metrics.
+- **On-Chain Reputation:** Utilizing Soulbound Tokens (SBTs) on the Polygon network to provide immutable, verifiable proof of achievements and "Relics" earned in The Crucible.
 
-- A simple Hardhat configuration file.
-- Foundry-compatible Solidity unit tests.
-- TypeScript integration tests using [`node:test`](nodejs.org/api/test.html), the new Node.js native test runner, and [`viem`](https://viem.sh/).
-- Examples demonstrating how to connect to different types of networks, including locally simulating OP mainnet.
+## 🛠️ Tech Stack
+- **Frontend:** Next.js (App Router), Framer Motion, Tailwind CSS
+- **3D Visualization:** Spline, Three.js, OGL (Neural Canvas)
+- **AI Integration:** Google Gemini 3.1 Flash API (Dynamic Challenge Generation)
+- **Web3:** Polygon, Wagmi, RainbowKit, Viem (Soulbound Token Minting)
+- **Backend/Storage:** Supabase (User Profiles & Handle Mapping)
+- **Icons:** Lucide React
 
-## Usage
+## 🌊 Website Flow
+1. **The Gateway:** Landing page showcasing the bioluminescent aesthetic and core mission.
+2. **Neural Uplink (Onboarding):** Users connect their Web3 wallet and sync their GitHub/Competitive Programming handles.
+3. **The Mirror (Profile):** A high-fidelity "Digital Organism" view where users manage their social links and identity.
+4. **The Dashboard:** The heart of the app where the 3D EvoTree visualizes commit frequency, algorithm scores, and specialization.
+5. **The Crucible:** An AI-fueled testing arena where developers prove their mastery in 8 specific subjects (React, Solidity, Rust, etc.) to earn on-chain Relics.
+6. **Minting:** Successful trials allow users to mint soulbound certificates that permanently attach to their digital tree.
 
-### Running Tests
+## 🚀 How to Run Locally
 
-To run all the tests in the project, execute the following command:
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn
 
-```shell
-npx hardhat test
+### 1. Clone the repository
+```bash
+git clone https://github.com/NayanG-45/EvoTree.git
+cd EvoTree
 ```
 
-You can also selectively run the Solidity or `node:test` tests:
-
-```shell
-npx hardhat test solidity
-npx hardhat test nodejs
+### 2. Install Dependencies
+```bash
+npm install
 ```
 
-### Make a deployment to Sepolia
-
-This project includes an example Ignition module to deploy the contract. You can deploy this module to a locally simulated chain or to Sepolia.
-
-To run the deployment to a local chain:
-
-```shell
-npx hardhat ignition deploy ignition/modules/Counter.ts
+### 3. Setup Environment Variables
+Create a `.env` file in `packages/frontend` (if required for Supabase/API keys):
+```env
+NEXT_PUBLIC_GEMINI_API_KEY=YOUR_KEY
+# Add other keys as found in the project documentation
 ```
 
-To run the deployment to Sepolia, you need an account with funds to send the transaction. The provided Hardhat configuration includes a Configuration Variable called `SEPOLIA_PRIVATE_KEY`, which you can use to set the private key of the account you want to use.
+### 4. Run the development server
+```bash
+# To run the entire workspace
+npm run dev
 
-You can set the `SEPOLIA_PRIVATE_KEY` variable using the `hardhat-keystore` plugin or by setting it as an environment variable.
-
-To set the `SEPOLIA_PRIVATE_KEY` config variable using `hardhat-keystore`:
-
-```shell
-npx hardhat keystore set SEPOLIA_PRIVATE_KEY
+# Or navigate to the frontend specifically
+cd packages/frontend
+npm run dev
 ```
 
-After setting the variable, you can run the deployment with the Sepolia network:
+### 5. Access the Interface
+Open [http://localhost:3000](http://localhost:3000) in your browser to begin your evolution.
 
-```shell
-npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
-```
+---
+
+**Built with 💚 for Hackofiesta 7.0**
+*Evolve your identity. Grow your forest.*
