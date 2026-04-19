@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Activity, Brain, GitBranch, Cpu, Sparkles, TrendingUp, TrendingDown, ChevronRight, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { MagicCard } from "@/components/animations/MagicCard";
 
 const stats = [
   { 
@@ -13,6 +14,7 @@ const stats = [
     trend: "12.4%", 
     isUp: true, 
     color: "var(--bio-1)",
+    glowColor: "16, 185, 129",
     history: [30, 45, 35, 60, 50, 85, 75],
     desc: "Neural commit frequency is currently optimized. High affinity for Rust and Solidity patterns detected in recent epochs."
   },
@@ -25,6 +27,7 @@ const stats = [
     trend: "3.1%", 
     isUp: true, 
     color: "var(--bio-2)",
+    glowColor: "6, 182, 212",
     history: [88, 90, 89, 92, 91, 94, 94],
     desc: "Logical synthesis reaching stable threshold. Complex pattern recognition in ZK circuits has increased by 14%."
   },
@@ -37,6 +40,7 @@ const stats = [
     trend: "0.8%", 
     isUp: false, 
     color: "var(--bio-3)",
+    glowColor: "71, 85, 105",
     history: [85, 84, 86, 83, 84, 82, 82],
     desc: "Computational overhead is stabilizing. Parallel thread execution is being redistributed to maximize spore yield."
   },
@@ -49,6 +53,7 @@ const stats = [
     trend: "22%", 
     isUp: true, 
     color: "var(--bio-4)",
+    glowColor: "168, 85, 247",
     history: [120, 150, 180, 240, 280, 290, 312],
     desc: "P2P mesh density is expanding. Global sync status is currently at 99.8% across 14 geolocated neural clusters."
   },
@@ -61,6 +66,7 @@ const stats = [
     trend: "5.6%", 
     isUp: true, 
     color: "var(--bio-5)",
+    glowColor: "234, 179, 8",
     history: [38, 40, 42, 41, 44, 46, 47.9],
     desc: "Estimated passive yield for the current cycle. Spore propagation is accelerating due to optimized smart contract logic."
   },
@@ -102,43 +108,50 @@ export function Sidebar() {
       style={{ background: "var(--gradient-canvas)" }}
     >
       {/* Balance card */}
-      <motion.div
-        layout
-        className="panel relative overflow-hidden p-5 backdrop-blur-2xl bg-white/5 border-white/10"
+      <MagicCard 
+        glowColor="16, 185, 129"
+        enableMagnetism={false}
+        className="backdrop-blur-2xl"
       >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-20 blur-2xl"
-          style={{ background: "var(--gradient-bio)" }}
-        />
-        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-slate-500">
-          Neural Liquidity
-        </p>
-        <div className="mt-3 flex items-end justify-between gap-2">
-          <p className="flex items-baseline gap-1.5 font-display text-3xl font-bold leading-tight text-white">
-            <span>12.847</span>
-            <span className="text-xs font-normal text-slate-400">ETH</span>
+        <div className="relative p-5">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-20 blur-2xl"
+            style={{ background: "var(--gradient-bio)" }}
+          />
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-slate-500">
+            Neural Liquidity
           </p>
-          <div className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] text-emerald-400">
-            <TrendingUp className="h-3 w-3" />
-            <span>2.3%</span>
+          <div className="mt-3 flex items-end justify-between gap-2">
+            <p className="flex items-baseline gap-1.5 font-display text-3xl font-bold leading-tight text-white">
+              <span>12.847</span>
+              <span className="text-xs font-normal text-slate-400">ETH</span>
+            </p>
+            <div className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] text-emerald-400">
+              <TrendingUp className="h-3 w-3" />
+              <span>2.3%</span>
+            </div>
           </div>
         </div>
-      </motion.div>
+      </MagicCard>
 
       {/* Stats */}
       <div className="flex flex-col gap-2.5">
         {stats.map((s, i) => {
           const isExpanded = expanded === s.id;
           return (
-            <motion.div
+            <MagicCard
               key={s.id}
-              layout
-              onClick={() => setExpanded(isExpanded ? null : s.id)}
-              className={`panel group flex flex-col cursor-pointer transition-all duration-300 backdrop-blur-xl bg-white/5 border-white/10 ${
-                isExpanded ? "p-5 ring-1 ring-white/20" : "p-3.5"
+              glowColor={s.glowColor}
+              enableMagnetism={false}
+              className={`flex flex-col cursor-pointer transition-all duration-300 backdrop-blur-xl ${
+                isExpanded ? "ring-1 ring-white/20" : ""
               }`}
             >
+              <div 
+                onClick={() => setExpanded(isExpanded ? null : s.id)}
+                className={`flex flex-col ${isExpanded ? "p-5" : "p-3.5"}`}
+              >
               <div className="flex items-center gap-3">
                 <div
                   className="grid h-10 w-10 shrink-0 place-items-center rounded-xl"
@@ -207,7 +220,8 @@ export function Sidebar() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+              </div>
+            </MagicCard>
           );
         })}
       </div>
