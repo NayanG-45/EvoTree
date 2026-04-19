@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/evotree/Sidebar";
 import { Footer } from "@/components/evotree/Footer";
 import type { Metadata } from "next";
 import dynamic from 'next/dynamic';
+import { Suspense } from "react";
 
 const Canvas = dynamic(() => import('@/components/evotree/Canvas').then(mod => mod.Canvas), {
   ssr: false,
@@ -22,7 +23,9 @@ export default function Dashboard() {
         <Sidebar />
         <main className="relative min-h-[calc(100vh-76px)] w-full flex flex-col overflow-hidden">
           <div className="flex-1 relative">
-            <Canvas />
+            <Suspense fallback={null}>
+              <Canvas />
+            </Suspense>
             
             {/* Neural Ground / Digital Soil Base */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-32 pointer-events-none z-10">

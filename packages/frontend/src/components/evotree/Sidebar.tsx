@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Activity, Brain, GitBranch, Cpu, Sparkles, TrendingUp, TrendingDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MagicCard } from "@/components/animations/MagicCard";
@@ -99,9 +99,8 @@ function Sparkline({ data, color }: { data: number[], color: string }) {
   );
 }
 
-export function Sidebar() {
+export const Sidebar = React.memo(function Sidebar() {
   const [expanded, setExpanded] = useState<string | null>(null);
-  const STATS_PER_VIEW = 5; // Guidance for height
 
   return (
     <aside 
@@ -112,26 +111,32 @@ export function Sidebar() {
       <MagicCard 
         glowColor="16, 185, 129"
         enableMagnetism={false}
-        className="backdrop-blur-2xl"
+        className="backdrop-blur-xl"
       >
-        <div className="relative p-5">
+        <div className="relative p-6 flex flex-col gap-4">
           <div
             aria-hidden
             className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-20 blur-2xl"
             style={{ background: "var(--gradient-bio)" }}
           />
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-slate-500">
-            Neural Liquidity
-          </p>
-          <div className="mt-3 flex items-end justify-between gap-2">
-            <p className="flex items-baseline gap-1.5 font-display text-3xl font-bold leading-tight text-white">
-              <span>12.847</span>
-              <span className="text-xs font-normal text-slate-400">ETH</span>
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-slate-500 font-bold">
+              Neural Liquidity
             </p>
-            <div className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] text-emerald-400">
-              <TrendingUp className="h-3 w-3" />
-              <span>2.3%</span>
-            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+             <div className="flex items-baseline gap-2">
+                <span className="font-display text-4xl font-black text-white">
+                  12.847
+                </span>
+                <span className="font-mono text-xs font-bold text-slate-400 uppercase">
+                  ETH
+                </span>
+             </div>
+             <div className="flex items-center gap-1.5 w-fit rounded-lg bg-emerald-500/10 px-2 py-1 font-mono text-[9px] font-bold text-emerald-400 border border-emerald-500/20">
+               <TrendingUp className="h-2.5 w-2.5" />
+               <span>+2.3% ROOT SYNC</span>
+             </div>
           </div>
         </div>
       </MagicCard>
@@ -228,4 +233,4 @@ export function Sidebar() {
       </div>
     </aside>
   );
-}
+});

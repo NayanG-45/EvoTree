@@ -1,31 +1,12 @@
 "use client";
-import React from "react";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { Wallet, Link, TrendingUp, Zap, Cpu, GitBranch } from "lucide-react";
-import LinkNext from "next/link";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Zap, Cpu, GitBranch, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAccount } from "wagmi";
 import { Navbar } from "@/components/evotree/Navbar";
 import { Footer } from "@/components/evotree/Footer";
 
-const steps = [
-  {
-    icon: Wallet,
-    title: "Step 1: Connect Your Wallet",
-    desc: "Link MetaMask in one click. Your on-chain identity becomes the root. This is where your reputation lives.",
-    color: "var(--bio-1)",
-  },
-  {
-    icon: Link,
-    title: "Step 2: Sync Your Handles",
-    desc: "Pull your GitHub, Codeforces, LeetCode, and Kaggle profiles. Real data. Your tree feeds on what you've actually built.",
-    color: "var(--bio-2)",
-  },
-  {
-    icon: TrendingUp,
-    title: "Step 3: Watch Your EvoTree Grow",
-    desc: "Every commit, every solved problem—your tree evolves in real-time. Visual proof that you're leveling up.",
-    color: "var(--bio-4)",
-  },
-];
 
 const features = [
   {
@@ -60,74 +41,6 @@ const features = [
   },
 ];
 
-const TiltCard = ({ step, index }: { step: { icon: React.ElementType, title: string, desc: string, color: string }; index: number }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [15, -15]), { stiffness: 300, damping: 30 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-15, 15]), { stiffness: 300, damping: 30 });
-
-  const glareX = useSpring(useTransform(x, [-0.5, 0.5], [0, 100]), { stiffness: 300, damping: 30 });
-  const glareY = useSpring(useTransform(y, [-0.5, 0.5], [0, 100]), { stiffness: 300, damping: 30 });
-
-  function handleMouse(event: React.MouseEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
-    
-    x.set(mouseX / width - 0.5);
-    y.set(mouseY / height - 0.5);
-  }
-
-  function handleMouseLeave() {
-    x.set(0);
-    y.set(0);
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.2 }}
-      viewport={{ once: true }}
-      onMouseMove={handleMouse}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        rotateX,
-        rotateY,
-        transformStyle: "preserve-3d",
-        perspective: "1000px"
-      }}
-      className="panel relative p-8 bg-white/[0.03] border-white/5 overflow-hidden group cursor-pointer transition-colors hover:border-white/10"
-    >
-      {/* Dynamic Glare Overlay */}
-      <motion.div 
-        style={{
-          background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.08) 0%, transparent 60%)`,
-        }}
-        className="absolute inset-0 pointer-events-none z-20"
-      />
-
-      <div 
-        className="absolute -right-10 -top-10 w-32 h-32 rounded-full opacity-10 blur-3xl transition-opacity group-hover:opacity-20"
-        style={{ background: step.color }}
-      />
-      
-      <div className="relative z-10" style={{ transform: "translateZ(50px)", transformStyle: "preserve-3d" }}>
-         <div 
-          className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 text-emerald-400"
-          style={{ transform: "translateZ(40px)" }}
-         >
-            <step.icon className="w-6 h-6" style={{ color: step.color }} />
-         </div>
-         <h3 className="text-xl font-bold mb-3" style={{ transform: "translateZ(30px)" }}>{step.title}</h3>
-         <p className="text-slate-400 leading-relaxed text-sm" style={{ transform: "translateZ(20px)" }}>{step.desc}</p>
-      </div>
-    </motion.div>
-  );
-};
 
 import CircularGallery from "@/components/ui/CircularGallery";
 
@@ -154,7 +67,41 @@ const galleryItems = [
   }
 ];
 
-import MagicRings from "@/components/ui/MagicRings";export default function AboutPage() {
+import MagicRings from "@/components/ui/MagicRings";
+
+export default function AboutPage() {
+  const { address, isConnected } = useAccount();
+  const router = useRouter();
+  const [isPlanting, setIsPlanting] = useState(false);
+
+  const handlePlantSeed = async () => {
+    if (!isConnected || !address) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+
+    try {
+      setIsPlanting(true);
+      const response = await fetch("/api/mint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userWalletAddress: address, tokenId: 0 }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Minting failed");
+      }
+
+      // Success - redirect to dashboard
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Planting error:", error);
+      alert("Failed to plant seed. Please try again.");
+    } finally {
+      setIsPlanting(false);
+    }
+  };
+
   return (
     <div className="h-screen overflow-y-auto scroll-smooth snap-y snap-mandatory bg-background text-foreground selection:bg-emerald-500/30">
       <div className="fixed top-0 left-0 right-0 z-50">
@@ -198,15 +145,16 @@ import MagicRings from "@/components/ui/MagicRings";export default function Abou
                 </div>
               </div>
               
-              <LinkNext href="/dashboard">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-3.5 rounded-full bg-emerald-500 text-black font-black text-lg transition-colors shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                >
-                  Plant your seed
-                </motion.button>
-              </LinkNext>
+              <motion.button
+                onClick={handlePlantSeed}
+                disabled={isPlanting}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-emerald-500 text-black font-black text-lg transition-colors shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isPlanting && <Loader2 className="w-5 h-5 animate-spin" />}
+                {isPlanting ? "Planting..." : "Plant your seed"}
+              </motion.button>
 
               {/* Quick Project Pillars */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
@@ -317,9 +265,11 @@ import MagicRings from "@/components/ui/MagicRings";export default function Abou
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -10, scale: 1.01, backgroundColor: "rgba(255,255,255,0.05)" }}
-                transition={{ duration: 0.2, ease: "circOut" }}
+                transition={{ 
+                  delay: i * 0.1,
+                  duration: 0.2, 
+                  ease: "circOut" 
+                }}
                 className="group relative p-8 rounded-[2rem] bg-white/[0.02] border border-white/10 transition-all duration-200 hover:border-emerald-500/40 flex flex-col items-start min-h-[380px] overflow-hidden"
               >
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -361,15 +311,16 @@ import MagicRings from "@/components/ui/MagicRings";export default function Abou
             <p className="text-xl lg:text-2xl text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
               Stop collecting static certificates. Join the forest that grows with your true potential.
             </p>
-            <LinkNext href="/dashboard">
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(16,185,129,0.4)" }}
-                whileTap={{ scale: 0.95 }}
-                className="px-12 py-5 rounded-full bg-emerald-500 text-black font-black text-xl lg:text-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.3)]"
-              >
-                Plant your seed now
-              </motion.button>
-            </LinkNext>
+            <motion.button
+              onClick={handlePlantSeed}
+              disabled={isPlanting}
+              whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(16,185,129,0.4)" }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-3 px-12 py-5 rounded-full bg-emerald-500 text-black font-black text-xl lg:text-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed mx-auto"
+            >
+              {isPlanting && <Loader2 className="w-6 h-6 animate-spin" />}
+              {isPlanting ? "Planting..." : "Plant your seed now"}
+            </motion.button>
             
             <div className="mt-10 font-mono text-xs tracking-[0.6em] text-emerald-500/40 uppercase">
               Neural Link Established
