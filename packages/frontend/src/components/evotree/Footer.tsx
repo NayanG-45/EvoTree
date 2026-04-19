@@ -17,7 +17,7 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="w-full border-t border-emerald-500/20 bg-[#0a0a0a] p-12 overflow-hidden">
+    <footer className="w-full border-t border-emerald-500/20 bg-[#0a0a0a] p-12 overflow-hidden mt-24">
       <div className="mx-auto w-full max-w-[1600px] flex flex-col gap-12">
         
         {/* Unified Main Section */}
@@ -79,13 +79,17 @@ export function Footer() {
         </div>
 
         {/* Root Metadata */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-mono text-slate-600 uppercase tracking-[0.2em] border-t border-white/5 pt-8">
+        <div className="flex flex-col items-center gap-3 text-[10px] md:text-[11px] font-mono text-slate-500/80 uppercase tracking-[0.3em] pt-4">
           <p>© 2026 EVOTREE PROTOCOL // BRANCH.GG ECOSYSTEM</p>
-          <div className="flex items-center gap-4">
-             <span className="h-1 w-1 rounded-full bg-emerald-500/40" />
-             <p>Built for Hackofiesta 7.0</p>
-             <span className="h-1 w-1 rounded-full bg-emerald-500/40" />
-             <p>v3.2.0-stable</p>
+          <div className="flex items-center gap-6 text-slate-600">
+             <div className="flex items-center gap-2">
+                <span className="h-1 w-1 rounded-full bg-emerald-500/40" />
+                <p>Built for Hackofiesta 7.0</p>
+             </div>
+             <div className="flex items-center gap-2">
+                <span className="h-1 w-1 rounded-full bg-cyan-500/40" />
+                <p>v3.2.0-stable</p>
+             </div>
           </div>
         </div>
       </div>

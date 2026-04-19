@@ -168,7 +168,7 @@ import MagicRings from "@/components/ui/MagicRings";export default function Abou
       </div>
 
       {/* PART 1: Hero Section */}
-      <section className="snap-start h-screen pt-[76px] flex items-center justify-center relative px-6 overflow-hidden">
+      <section className="snap-start h-screen pt-[120px] flex items-center justify-center relative px-6 overflow-hidden">
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col lg:flex-row items-center gap-10 relative">
             {/* Left Column: Text Content */}
@@ -291,7 +291,7 @@ import MagicRings from "@/components/ui/MagicRings";export default function Abou
       </section>
 
       {/* PART 2: How it Works */}
-      <section id="synthesis" className="snap-start h-screen pt-[76px] flex items-center justify-center relative px-6 overflow-hidden">
+      <section id="synthesis" className="snap-start h-screen pt-[120px] flex items-center justify-center relative px-6 overflow-hidden">
         <div className="container mx-auto max-w-6xl w-full">
           <div className="flex flex-col md:flex-row items-baseline justify-between mb-12 gap-4">
             <h2 className="font-display text-4xl lg:text-6xl font-bold tracking-tight">The Neural Synthesis</h2>
@@ -304,7 +304,7 @@ import MagicRings from "@/components/ui/MagicRings";export default function Abou
       </section>
 
       {/* PART 3: Benefits */}
-      <section id="benefits" className="snap-start h-screen pt-[76px] flex items-center justify-center relative px-6 overflow-hidden">
+      <section id="benefits" className="snap-start h-screen pt-[120px] flex items-center justify-center relative px-6 overflow-hidden">
         <div className="container mx-auto max-w-6xl w-full">
           <div className="mb-12 text-center">
              <h2 className="font-display text-5xl lg:text-7xl font-bold mb-4 tracking-tight">Why EvoTree?</h2>
@@ -377,10 +377,8 @@ import MagicRings from "@/components/ui/MagicRings";export default function Abou
           </motion.div>
         </div>
 
-        <div className="py-12 w-full">
-          <Footer />
-        </div>
       </section>
+      <Footer />
     </div>
   );
 }

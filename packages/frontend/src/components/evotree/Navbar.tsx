@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LinkNext from "next/link";
 import { usePathname } from "next/navigation";
-import { Wallet, X, MoreVertical } from "lucide-react";
+import { Wallet, X, MoreVertical, Terminal } from "lucide-react";
 
 const navLinks = [
   { label: "About", href: "/about" },
   { label: "Dashboard", href: "/dashboard" },
-  { label: "The Crucible (Test)", href: "#" },
+  { label: "The Crucible (Test)", href: "/crucible" },
   { label: "Profile", href: "/profile" },
 ];
 
@@ -17,6 +17,21 @@ export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [displayText, setDisplayText] = useState("");
+  const targetText = "ESTABLISHING NEURAL LINK...";
+  
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayText(targetText.slice(0, i));
+      i++;
+      if (i > targetText.length) {
+        setTimeout(() => { i = 0; }, 3000);
+      }
+    }, 70);
+    return () => clearInterval(interval);
+  }, []);
+
   const shortAddress = "0x7a2f…b4e9";
 
   return (
@@ -74,17 +89,31 @@ export function Navbar() {
         <div className="flex items-center gap-4">
           {/* Desktop Wallet */}
           <div className="hidden lg:flex items-center gap-3">
-             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
-                <span className="font-mono text-[9px] text-slate-500 uppercase">Neural Sync Active</span>
+             <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-black/40 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)] min-w-[220px]">
+                <Terminal className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                <span className="font-mono text-[10px] text-emerald-400/80 uppercase tracking-[0.1em] inline-block w-full">
+                  {displayText}
+                  <span className="inline-block w-1.5 h-3 bg-emerald-400 ml-1 animate-caret" />
+                </span>
              </div>
              
              <button 
                onClick={() => setConnected(!connected)}
-               className="flex items-center gap-2 px-5 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px] font-bold tracking-widest uppercase hover:bg-emerald-500/20 transition-all active:scale-95"
+               className="group relative flex items-center gap-3 px-7 py-3 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(0,212,255,0.15)] transition-all duration-300 active:scale-95"
              >
-                <Wallet className="w-3.5 h-3.5" />
-                {connected ? shortAddress : "Sync Root"}
+                {/* Advanced Gradient & Pulse */}
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600 group-hover:scale-110 transition-transform duration-500" />
+                <motion.div 
+                   animate={{ opacity: [0, 0.2, 0] }}
+                   transition={{ duration: 2, repeat: Infinity }}
+                   className="absolute inset-0 bg-white" 
+                />
+                
+                {/* Content */}
+                <Wallet className="relative z-10 w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
+                <span className="relative z-10 font-display font-black text-[11px] uppercase tracking-[0.2em] text-white">
+                   {connected ? shortAddress : "Plant Neural Seed"}
+                </span>
              </button>
           </div>
 
@@ -159,16 +188,19 @@ export function Navbar() {
               </nav>
 
               <div className="mt-auto">
-                 <button 
-                  onClick={() => {
-                    setConnected(!connected);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full flex items-center justify-center gap-3 bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-2xl text-emerald-400 font-mono text-xs font-bold tracking-widest uppercase hover:bg-emerald-500/20 transition-all"
-                 >
-                    <Wallet className="w-4 h-4" />
-                    {connected ? "Disconnect" : "Sync Root"}
-                 </button>
+                  <button 
+                    onClick={() => {
+                      setConnected(!connected);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="group relative w-full flex items-center justify-center gap-4 px-8 py-6 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 shadow-[0_15px_40px_rgba(16,185,129,0.3)]"
+                  >
+                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600" />
+                     <Wallet className="relative z-10 w-5 h-5 text-white" />
+                     <span className="relative z-10 font-display font-black text-sm uppercase tracking-[0.2em] text-white">
+                        {connected ? "DISCONNECT LINK" : "PLANT NEURAL SEED"}
+                     </span>
+                  </button>
                  <p className="mt-6 text-center text-[10px] uppercase tracking-[0.3em] text-slate-600 font-mono">
                    EvoTree Protocol v1.0
                  </p>

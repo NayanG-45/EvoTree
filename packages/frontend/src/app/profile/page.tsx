@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { createClient } from "@/utils/supabase/client";
-import Spline from '@splinetool/react-spline';
 import { Loader2 } from "lucide-react";
 
 import TextType from "@/components/ui/TextType";
@@ -14,6 +14,10 @@ import { Footer } from "@/components/evotree/Footer";
 import dynamic from 'next/dynamic';
 
 const SplashCursor = dynamic(() => import('@/components/ui/SplashCursor'), { ssr: false });
+const Spline = dynamic(() => import('@/components/evotree/SplineWrapper'), { 
+  ssr: false, 
+  loading: () => <div className="absolute inset-0 flex items-center justify-center text-[#00d4ff] animate-pulse font-mono text-sm tracking-[0.2em]">[RENDERING SPLINE CORE...]</div>
+});
 
 export default function ProfilePage() {
   const { address, isConnected } = useAccount();
@@ -153,7 +157,7 @@ export default function ProfilePage() {
   // --- DASHBOARD LAYOUT (Layout B) ---
   if (showDashboard) {
     return (
-      <div className="min-h-screen w-full bg-[#050505] text-white overflow-x-hidden relative flex flex-col pt-[76px]">
+      <div className="min-h-screen w-full bg-[#050505] text-white overflow-x-hidden relative flex flex-col pt-[120px]">
         {/* Navigation */}
         <Navbar />
 
@@ -289,7 +293,7 @@ export default function ProfilePage() {
 
   // --- ONBOARDING LAYOUT (Layout A) ---
   return (
-    <div className="min-h-screen flex flex-col bg-background relative overflow-x-hidden pt-[76px]">
+    <div className="min-h-screen flex flex-col bg-background relative overflow-x-hidden pt-[120px]">
       <Navbar />
       
       {/* Main Content Area */}
@@ -302,17 +306,37 @@ export default function ProfilePage() {
             <div className="w-full max-w-xl mx-auto space-y-8">
               
               {/* Header / Connect Button with Outer Glow */}
-              <div className="flex flex-col items-center space-y-4 w-full text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-cyan-500 bg-clip-text text-transparent">
-                  Terminal Access
-                </h1>
+              <div className="flex flex-col items-center space-y-8 w-full text-center">
+                <div className="space-y-2">
+                  <h1 className="text-3xl md:text-5xl font-display font-black tracking-tighter uppercase">
+                    <TextType 
+                       text="SYNCHRONIZE NEURAL CORE" 
+                       typingSpeed={40}
+                       className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent"
+                       loop={false}
+                    />
+                  </h1>
+                  <p className="text-emerald-500/40 font-mono text-[10px] tracking-[0.5em] uppercase">
+                    V-7.0 Security Protocol Active
+                  </p>
+                </div>
                 
-                <div className="relative group rounded-xl">
-                  {/* Glowing Aura Effect behind ConnectButton */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl blur opacity-25 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
-                  <div className="relative">
-                    <ConnectButton />
+                <div className="relative group p-[2px] rounded-2xl overflow-hidden transition-all hover:scale-105 active:scale-95 duration-500">
+                  {/* Animated Border Gradient */}
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,#10b981,#06b6d4,#3b82f6,#10b981)]" 
+                  />
+                  
+                  <div className="relative bg-[#050505] p-1 rounded-[14px]">
+                    <div className="relative z-10 px-6 py-1">
+                      <ConnectButton label="INITIALIZE LINK" />
+                    </div>
                   </div>
+
+                  {/* High Intensity Glows */}
+                  <div className="absolute -inset-4 bg-emerald-500/10 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               </div>
 
