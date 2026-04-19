@@ -1,0 +1,14 @@
+.text-type {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+.text-type__cursor {
+  display: inline-block;
+  opacity: 1;
+  transition: opacity 0.1s;
+}
+
+.text-type__cursor--hidden {
+  opacity: 0 !important;
+}

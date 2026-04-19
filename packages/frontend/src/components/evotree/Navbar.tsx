@@ -1,37 +1,21 @@
 "use client";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Wallet, Copy, Check } from "lucide-react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const navLinks = [
-  { label: "Dashboard", href: "#" },
+  { label: "Dashboard", href: "/profile" },
   { label: "The Crucible (Test)", href: "#" },
-  { label: "Profile", href: "#" },
+  { label: "Profile", href: "/profile" },
   { label: "About", href: "#" },
 ];
 
 export function Navbar() {
-  const [connected, setConnected] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const address = "0x7a2f4d8b9c1e3f5a6b8d0c2e4f6a8b4e9";
-  const shortAddress = "0x7a2f…b4e9";
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* noop */
-    }
-  };
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background-deep/70 backdrop-blur-md">
       <div className="mx-auto flex h-[clamp(56px,7vh,72px)] w-full max-w-[1600px] items-center justify-between gap-4 px-[clamp(1rem,3vw,2rem)]">
         {/* Left: Logo */}
         <motion.a
-          href="#"
+          href="/"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-2.5"
@@ -84,35 +68,7 @@ export function Navbar() {
 
         {/* Right: Connect Wallet */}
         <div className="flex items-center gap-2">
-          {connected ? (
-            <button
-              onClick={handleCopy}
-              className="group flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-2 font-mono text-[11px] text-primary transition-all duration-300 hover:bg-primary/20"
-              style={{ boxShadow: "0 0 14px oklch(0.85 0.19 165 / 0.25)" }}
-            >
-              <span className="h-2 w-2 rounded-full bg-emerald-400" style={{ boxShadow: "0 0 8px var(--bio-2)" }} />
-              <span>{shortAddress}</span>
-              {copied ? (
-                <Check className="h-3.5 w-3.5" />
-              ) : (
-                <Copy className="h-3.5 w-3.5 opacity-70 group-hover:opacity-100" />
-              )}
-            </button>
-          ) : (
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => setConnected(true)}
-              className="flex items-center gap-2 rounded-full px-4 py-2 font-display text-xs font-semibold text-primary-foreground"
-              style={{
-                background: "linear-gradient(135deg, var(--primary), var(--primary-glow))",
-                boxShadow: "var(--glow-primary)",
-              }}
-            >
-              <Wallet className="h-3.5 w-3.5" />
-              Connect Wallet
-            </motion.button>
-          )}
+          <ConnectButton />
         </div>
       </div>
     </header>
