@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 export type SkillNode = {
   id: string;
@@ -73,9 +74,134 @@ const LEAVES = [
 type Props = {
   hovered: string | null;
   setHovered: (id: string | null) => void;
+  onNodeClick?: (id: string | null) => void;
+  settings?: {
+    showLabels: boolean;
+    showActivity: boolean;
+    filter: string;
+  };
+  mouse?: { x: number; y: number };
 };
 
-export function Tree({ hovered, setHovered }: Props) {
+function NodeParticles({ x, y, level, color, mouse }: { x: number; y: number; level: number; color: string, mouse?: { x: number, y: number } }) {
+  // Density based on mastery: more particles for stronger skills
+  const count = Math.max(2, Math.floor(level / 8));
+  
+  // Create static positions and movement offsets
+  const particles = useMemo(() => {
+    return Array.from({ length: count }).map((_, i) => ({
+      tx: (i % 2 === 0 ? 1 : -1) * (10 + Math.random() * 20),
+      ty: (i % 3 === 0 ? 1 : -1) * (10 + Math.random() * 20),
+      duration: 3 + Math.random() * 4,
+      delay: Math.random() * 2,
+      size: 1.5 + Math.random() * 2
+    }));
+  }, [count]);
+
+  return (
+    <g>
+      {particles.map((p, i) => {
+        // Simple attraction logic
+        let shiftX = 0;
+        let shiftY = 0;
+        if (mouse) {
+          const dx = (mouse.x * 1000) - x;
+          const dy = (mouse.y * 720) - y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            const pull = (150 - dist) / 150;
+            shiftX = dx * pull * 0.4;
+            shiftY = dy * pull * 0.4;
+          }
+        }
+
+        return (
+          <motion.circle
+            key={i}
+            cx={x}
+            cy={y}
+            r={p.size}
+            fill={color}
+            initial={{ opacity: 0 }}
+            animate={{
+              x: [0, p.tx, 0].map(v => v + shiftX),
+              y: [0, p.ty, 0].map(v => v + shiftY),
+              opacity: [0.2, 0.7, 0.2],
+              scale: [1, 1.2, 1]
+            }}
+            transition={{
+              duration: p.duration,
+              repeat: Infinity,
+              delay: p.delay,
+              ease: "easeInOut"
+            }}
+            style={{ filter: `drop-shadow(0 0 5px ${color})` }}
+          />
+        );
+      })}
+    </g>
+  );
+}
+
+export function TreeCore() {
+  return (
+    <g>
+      {/* Outer Glow Core */}
+      <motion.rect
+        x="494"
+        y="460"
+        width="12"
+        height="260"
+        rx="6"
+        fill="oklch(0.85 0.19 165)"
+        animate={{
+          scaleY: [1, 1.05, 1],
+          opacity: [0.3, 0.6, 0.3],
+          filter: [
+            "blur(12px) drop-shadow(0 0 20px rgba(0,255,200,0.4))",
+            "blur(16px) drop-shadow(0 0 40px rgba(0,255,200,0.8))",
+            "blur(12px) drop-shadow(0 0 20px rgba(0,255,200,0.4))"
+          ]
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        style={{ transformOrigin: "bottom center" }}
+      />
+      {/* Inner Solid Core */}
+      <motion.rect
+        x="497"
+        y="460"
+        width="6"
+        height="260"
+        rx="3"
+        fill="oklch(0.85 0.19 165)"
+        animate={{
+          scaleY: [1, 1.02, 1],
+          opacity: [0.6, 0.9, 0.6],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        style={{ transformOrigin: "bottom center" }}
+      />
+    </g>
+  );
+}
+
+export function Tree({ hovered, setHovered, onNodeClick, settings, mouse }: Props) {
+  const showActivity = settings?.showActivity ?? true;
+  const activeFilter = settings?.filter ?? "all";
+
+  const isVisible = (n: SkillNode) => {
+    if (activeFilter === "all") return true;
+    return n.category.toLowerCase().includes(activeFilter.toLowerCase());
+  };
+
   return (
     <svg
       viewBox="0 0 1000 720"
@@ -98,6 +224,9 @@ export function Tree({ hovered, setHovered }: Props) {
 
       {/* ground glow */}
       <ellipse cx="500" cy="700" rx="380" ry="40" fill="url(#ground)" />
+
+      {/* Breathing Neural Core */}
+      <TreeCore />
 
       {/* Trunk base — extra thick grounded foot */}
       <motion.path
@@ -137,6 +266,7 @@ export function Tree({ hovered, setHovered }: Props) {
 
       {/* Branches */}
       {NODES.map((n, i) => {
+        if (!isVisible(n)) return null;
         const isHover = hovered === n.id;
         return (
           <g key={n.id}>
@@ -214,7 +344,23 @@ export function Tree({ hovered, setHovered }: Props) {
 
       {/* Nodes */}
       {NODES.map((n, i) => {
-        const isHover = hovered === n.id;
+        if (!isVisible(n)) return null;
+        const isHovered = hovered === n.id;
+
+        // Proximity Bloom Logic
+        let bloomScale = 1;
+        let bloomGlow = 8;
+        if (mouse) {
+          const dx = (mouse.x * 1000) - n.x;
+          const dy = (mouse.y * 720) - n.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            const factor = (120 - dist) / 120;
+            bloomScale = 1 + (factor * 0.3);
+            bloomGlow = 8 + (factor * 20);
+          }
+        }
+
         return (
           <motion.g
             key={n.id}
@@ -228,36 +374,47 @@ export function Tree({ hovered, setHovered }: Props) {
             }}
             onMouseEnter={() => setHovered(n.id)}
             onMouseLeave={() => setHovered(null)}
+            onClick={() => onNodeClick?.(n.id)}
             style={{ cursor: "pointer" }}
           >
+            {/* Ambient Particle Cluster */}
+            {showActivity && <NodeParticles x={n.x} y={n.y} level={n.level} color={n.color} mouse={mouse} />}
+
             {/* outer halo */}
             <motion.circle
               cx={n.x}
               cy={n.y}
-              r={isHover ? 32 : 18}
+              r={18}
               fill={n.color}
-              opacity={isHover ? 0.32 : 0.18}
+              opacity={isHovered ? 0.35 : 0.15}
               filter="url(#soft)"
-              animate={{ r: isHover ? 34 : 18 }}
+              animate={{ 
+                scale: isHovered ? 1.8 : bloomScale,
+                opacity: isHovered ? 0.4 : 0.2
+              }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
             />
-            {/* occluder — solid bg disc so branch lines don't visibly pierce the node */}
+
+            {/* occluder */}
             <circle
               cx={n.x}
               cy={n.y}
-              r={isHover ? 13 : 10}
+              r={isHovered ? 13 : 10}
               fill="oklch(0.09 0.025 190)"
             />
+
             {/* core */}
             <motion.circle
               cx={n.x}
               cy={n.y}
-              r={isHover ? 10 : 7}
+              r={7}
               fill={n.color}
-              animate={{ r: isHover ? 11 : 7 }}
+              animate={{ 
+                scale: isHovered ? 1.5 : bloomScale,
+              }}
               transition={{ type: "spring", stiffness: 260, damping: 14 }}
               style={{
-                filter: `drop-shadow(0 0 6px ${n.color}) drop-shadow(0 0 14px ${n.color})`,
+                filter: `drop-shadow(0 0 ${isHovered ? 25 : bloomGlow}px ${n.color}) drop-shadow(0 0 ${isHovered ? 12 : 5}px ${n.color})`,
               }}
             />
             {/* inner sparkle */}
