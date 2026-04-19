@@ -153,14 +153,14 @@ export default function ProfilePage() {
   // --- DASHBOARD LAYOUT (Layout B) ---
   if (showDashboard) {
     return (
-      <div className="min-h-screen w-full bg-[#050505] text-white overflow-x-hidden relative flex flex-col">
+      <div className="min-h-screen w-full bg-[#050505] text-white overflow-x-hidden relative flex flex-col pt-[76px]">
         {/* Navigation */}
         <Navbar />
 
         {/* WebGL Fluid Background */}
         <SplashCursor />
         
-        <main className="flex-grow relative z-10 max-w-7xl mx-auto w-full py-24 px-4 md:px-12 lg:px-24 pointer-events-auto">
+        <main className="flex-grow relative z-10 max-w-7xl mx-auto w-full pt-12 pb-24 px-4 md:px-12 lg:px-24 pointer-events-auto">
           {/* Dashboard Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
             <div>
@@ -289,149 +289,156 @@ export default function ProfilePage() {
 
   // --- ONBOARDING LAYOUT (Layout A) ---
   return (
-    <div className="h-screen overflow-hidden w-full bg-background -mt-16 pt-16"> {/* Adjust for global navbar if any */}
-      <div className="grid grid-cols-1 md:grid-cols-2 h-full w-full">
-        
-        {/* LEFT COLUMN: Auth & Form */}
-        <div className="flex flex-col items-center justify-center p-6 lg:p-12 z-10 w-full h-full overflow-y-auto pb-24 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+    <div className="min-h-screen flex flex-col bg-background relative overflow-x-hidden pt-[76px]">
+      <Navbar />
+      
+      {/* Main Content Area */}
+      <div className="flex-grow flex flex-col items-center justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-[1600px] mx-auto min-h-[calc(100vh-72px)]">
           
-          <div className="w-full max-w-xl mx-auto space-y-8 mt-12 md:mt-24">
+          {/* LEFT COLUMN: Auth & Form */}
+          <div className="flex flex-col items-center justify-center p-6 lg:p-12 z-10 w-full h-full pb-24">
             
-            {/* Header / Connect Button with Outer Glow */}
-            <div className="flex flex-col items-center sm:items-start space-y-4">
-              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-cyan-500 bg-clip-text text-transparent">
-                Terminal Access
-              </h1>
+            <div className="w-full max-w-xl mx-auto space-y-8">
               
-              <div className="relative group rounded-xl">
-                {/* Glowing Aura Effect behind ConnectButton */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl blur opacity-25 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative">
-                  <ConnectButton />
+              {/* Header / Connect Button with Outer Glow */}
+              <div className="flex flex-col items-center space-y-4 w-full text-center">
+                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-br from-emerald-400 to-cyan-500 bg-clip-text text-transparent">
+                  Terminal Access
+                </h1>
+                
+                <div className="relative group rounded-xl">
+                  {/* Glowing Aura Effect behind ConnectButton */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl blur opacity-25 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
+                  <div className="relative">
+                    <ConnectButton />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Main Form Container */}
-            <div 
-              className={`p-6 sm:p-8 rounded-2xl bg-[#0a0a0a] border ${
-                isConnected ? 'border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.15)] opacity-100' : 'border-white/10 shadow-none opacity-50 blur-[2px] pointer-events-none'
-              } transition-all duration-500 relative overflow-hidden`}
-            >
-              
-              {!isConnected && (
-                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                  <span className="text-emerald-400 font-mono text-sm border border-emerald-500/50 bg-black/50 px-4 py-2 rounded shadow-[0_0_15px_rgba(16,185,129,0.5)]">
-                    [ AWAITING WALLET UPLINK ]
-                  </span>
-                </div>
-              )}
+              {/* Main Form Container */}
+              <div 
+                className={`p-6 sm:p-8 rounded-2xl bg-[#0a0a0a] border ${
+                  isConnected ? 'border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.15)] opacity-100' : 'border-white/10 shadow-none opacity-50 blur-[2px] pointer-events-none'
+                } transition-all duration-500 relative overflow-hidden`}
+              >
+                
+                {!isConnected && (
+                  <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                    <span className="text-emerald-400 font-mono text-sm border border-emerald-500/50 bg-black/50 px-4 py-2 rounded shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                      [ AWAITING WALLET UPLINK ]
+                    </span>
+                  </div>
+                )}
 
-              {status === "fetching" && (
-                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-md">
-                  <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
-                </div>
-              )}
+                {status === "fetching" && (
+                  <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-md">
+                    <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+                  </div>
+                )}
 
-              <form onSubmit={handleSave} className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  {/* Basic Info */}
-                  <div className="space-y-1.5 group">
-                    <label className="cyber-label">Username *</label>
-                    <input name="username" value={formData.username} onChange={handleChange} placeholder="CyberPunk2077" className="cyber-input" required />
-                  </div>
-                  <div className="space-y-1.5 group">
-                    <label className="cyber-label">Email *</label>
-                    <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="edge@runner.net" className="cyber-input" required />
-                  </div>
-
-                  {/* Organization & Skills */}
-                  <div className="space-y-1.5 group">
-                    <label className="cyber-label">College / Org</label>
-                    <input name="college_org" value={formData.college_org} onChange={handleChange} placeholder="Night City Univ" className="cyber-input" />
-                  </div>
-                  <div className="space-y-1.5 group">
-                    <label className="cyber-label">Primary Skill</label>
-                    <input name="primary_skill" value={formData.primary_skill} onChange={handleChange} placeholder="Solidity / Rust" className="cyber-input" />
-                  </div>
-
-                  {/* Dev Links */}
-                  <div className="space-y-1.5 group">
-                    <label className="cyber-label">GitHub Handle</label>
-                    <input name="github" value={formData.github} onChange={handleChange} placeholder="username" className="cyber-input" />
-                  </div>
-                  <div className="space-y-1.5 group">
-                    <label className="cyber-label">LeetCode Profile</label>
-                    <input name="leetcode" value={formData.leetcode} onChange={handleChange} placeholder="username" className="cyber-input" />
-                  </div>
-                  <div className="space-y-1.5 group">
-                    <label className="cyber-label">Codeforces</label>
-                    <input name="codeforces" value={formData.codeforces} onChange={handleChange} placeholder="username" className="cyber-input" />
-                  </div>
-                  <div className="space-y-1.5 group">
-                    <label className="cyber-label">Kaggle</label>
-                    <input name="kaggle" value={formData.kaggle} onChange={handleChange} placeholder="username" className="cyber-input" />
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <button
-                    type="submit"
-                    disabled={status === "loading"}
-                    className="w-full relative group overflow-hidden rounded-md p-[1px] transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    <span className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-cyan-500 to-purple-500 opacity-60 group-hover:opacity-100 transition-opacity duration-500"></span>
-                    <div className="relative bg-black px-6 py-3 rounded-md flex items-center justify-center space-x-2">
-                       <span className="font-bold tracking-wider text-white text-sm uppercase">
-                         {status === "loading" ? "Uplinking..." : "Save Identity"}
-                       </span>
+                <form onSubmit={handleSave} className="space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    {/* Basic Info */}
+                    <div className="space-y-1.5 group">
+                      <label className="cyber-label">Username *</label>
+                      <input name="username" value={formData.username} onChange={handleChange} placeholder="CyberPunk2077" className="cyber-input" required />
                     </div>
-                  </button>
-                </div>
-
-                {hasProfile && status !== "success" && (
-                    <div className="mt-4 flex justify-center">
-                        <button 
-                          type="button"
-                          onClick={() => setShowDashboard(true)} 
-                          className="text-gray-400 hover:text-emerald-400 text-xs font-mono transition-colors"
-                        >
-                          [ BACK TO DASHBOARD ]
-                        </button>
+                    <div className="space-y-1.5 group">
+                      <label className="cyber-label">Email *</label>
+                      <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="edge@runner.net" className="cyber-input" required />
                     </div>
-                )}
 
-                {/* Status Messaging */}
-                {status === "success" && (
-                  <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center min-h-[3rem]">
-                     <TextType 
-                        text="Identity initialization successful... Establishing secure connection..." 
-                        typingSpeed={30}
-                        className="text-emerald-400 text-xs font-mono text-center"
-                        loop={false}
-                     />
+                    {/* Organization & Skills */}
+                    <div className="space-y-1.5 group">
+                      <label className="cyber-label">College / Org</label>
+                      <input name="college_org" value={formData.college_org} onChange={handleChange} placeholder="Night City Univ" className="cyber-input" />
+                    </div>
+                    <div className="space-y-1.5 group">
+                      <label className="cyber-label">Primary Skill</label>
+                      <input name="primary_skill" value={formData.primary_skill} onChange={handleChange} placeholder="Solidity / Rust" className="cyber-input" />
+                    </div>
+
+                    {/* Dev Links */}
+                    <div className="space-y-1.5 group">
+                      <label className="cyber-label">GitHub Handle</label>
+                      <input name="github" value={formData.github} onChange={handleChange} placeholder="username" className="cyber-input" />
+                    </div>
+                    <div className="space-y-1.5 group">
+                      <label className="cyber-label">LeetCode Profile</label>
+                      <input name="leetcode" value={formData.leetcode} onChange={handleChange} placeholder="username" className="cyber-input" />
+                    </div>
+                    <div className="space-y-1.5 group">
+                      <label className="cyber-label">Codeforces</label>
+                      <input name="codeforces" value={formData.codeforces} onChange={handleChange} placeholder="username" className="cyber-input" />
+                    </div>
+                    <div className="space-y-1.5 group">
+                      <label className="cyber-label">Kaggle</label>
+                      <input name="kaggle" value={formData.kaggle} onChange={handleChange} placeholder="username" className="cyber-input" />
+                    </div>
                   </div>
-                )}
-                {status === "error" && (
-                  <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono text-center rounded animate-in fade-in slide-in-from-bottom-2">
-                    [ ERROR: {message} ]
+
+                  <div className="pt-4">
+                    <button
+                      type="submit"
+                      disabled={status === "loading"}
+                      className="w-full relative group overflow-hidden rounded-md p-[1px] transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <span className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-cyan-500 to-purple-500 opacity-60 group-hover:opacity-100 transition-opacity duration-500"></span>
+                      <div className="relative bg-black px-6 py-3 rounded-md flex items-center justify-center space-x-2">
+                         <span className="font-bold tracking-wider text-white text-sm uppercase">
+                           {status === "loading" ? "Uplinking..." : "Save Identity"}
+                         </span>
+                      </div>
+                    </button>
                   </div>
-                )}
-              </form>
+
+                  {hasProfile && status !== "success" && (
+                      <div className="mt-4 flex justify-center">
+                          <button 
+                            type="button"
+                            onClick={() => setShowDashboard(true)} 
+                            className="text-gray-400 hover:text-emerald-400 text-xs font-mono transition-colors"
+                          >
+                            [ BACK TO DASHBOARD ]
+                          </button>
+                      </div>
+                  )}
+
+                  {/* Status Messaging */}
+                  {status === "success" && (
+                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded flex items-center justify-center min-h-[3rem]">
+                       <TextType 
+                          text="Identity initialization successful... Establishing secure connection..." 
+                          typingSpeed={30}
+                          className="text-emerald-400 text-xs font-mono text-center"
+                          loop={false}
+                       />
+                    </div>
+                  )}
+                  {status === "error" && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono text-center rounded animate-in fade-in slide-in-from-bottom-2">
+                      [ ERROR: {message} ]
+                    </div>
+                  )}
+                </form>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* RIGHT COLUMN: 3D Spline Canvas */}
-        <div className="relative hidden md:block min-h-[500px] h-full w-full bg-[#050505] overflow-hidden border-l border-white/5 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
-           <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#050505] via-transparent to-transparent pointer-events-none"></div>
-           <Spline
-              scene="https://prod.spline.design/CUDNgt3WsxDikGmn/scene.splinecode" 
-              className="w-full h-full object-cover opacity-90 transition-opacity duration-1000 ease-in-out"
-            />
+          {/* RIGHT COLUMN: 3D Spline Canvas */}
+          <div className="relative hidden md:block min-h-[500px] h-full w-full bg-[#050505] overflow-hidden border-l border-white/5 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
+             <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#050505] via-transparent to-transparent pointer-events-none"></div>
+             <Spline
+                scene="https://prod.spline.design/CUDNgt3WsxDikGmn/scene.splinecode" 
+                className="w-full h-full object-cover opacity-90 transition-opacity duration-1000 ease-in-out"
+              />
+          </div>
+          
         </div>
-        
       </div>
+      
+      <Footer />
       
       {/* Global Style overrides for this specific form to improve input affordance and UI/UX */}
       <style dangerouslySetInnerHTML={{__html: `
