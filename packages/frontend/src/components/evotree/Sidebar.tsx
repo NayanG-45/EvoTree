@@ -101,10 +101,11 @@ function Sparkline({ data, color }: { data: number[], color: string }) {
 
 export function Sidebar() {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const STATS_PER_VIEW = 5; // Guidance for height
 
   return (
     <aside 
-      className="flex w-full shrink-0 flex-col gap-3 border-b border-white/5 p-5 md:w-[clamp(280px,24vw,360px)] md:border-b-0 md:border-r"
+      className="md:sticky md:top-[76px] flex w-full shrink-0 flex-col gap-3 border-b border-white/5 p-5 md:h-[calc(100vh-76px)] md:w-[clamp(280px,24vw,360px)] md:border-b-0 md:border-r overflow-y-auto scrollbar-none"
       style={{ background: "var(--gradient-canvas)" }}
     >
       {/* Balance card */}

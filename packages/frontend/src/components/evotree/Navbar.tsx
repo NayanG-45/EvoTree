@@ -7,10 +7,10 @@ import { usePathname } from "next/navigation";
 import { Wallet, X, MoreVertical } from "lucide-react";
 
 const navLinks = [
-  { label: "Dashboard", href: "/" },
-  { label: "The Crucible (Test)", href: "#" },
-  { label: "Profile", href: "#" },
   { label: "About", href: "/about" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "The Crucible (Test)", href: "#" },
+  { label: "Profile", href: "/profile" },
 ];
 
 export function Navbar() {
@@ -20,19 +20,19 @@ export function Navbar() {
   const shortAddress = "0x7a2f…b4e9";
 
   return (
-    <header className="sticky top-0 z-[100] w-full border-b border-white/10 bg-background-deep/70 backdrop-blur-md">
-      <div className="mx-auto flex h-[72px] w-full max-w-[1600px] items-center justify-between gap-4 px-6">
+    <header className="fixed top-0 z-[100] w-full border-b border-white/10 bg-black/85 backdrop-blur-xl">
+      <div className="mx-auto flex h-[76px] w-full max-w-[1700px] items-center justify-between gap-4 px-8">
         
         {/* Left: Logo */}
         <LinkNext href="/">
           <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-2.5 cursor-pointer"
+            className="flex items-center gap-2.5 cursor-pointer group"
           >
             <div
-              className="relative h-11 w-11 overflow-hidden rounded-full ring-1 ring-primary/40 flex items-center justify-center bg-transparent"
-              style={{ boxShadow: "0 0 16px oklch(0.85 0.19 165 / 0.45)" }}
+              className="relative h-12 w-12 overflow-hidden rounded-full ring-1 ring-primary/40 flex items-center justify-center bg-transparent transition-transform group-hover:scale-110"
+              style={{ boxShadow: "0 0 20px oklch(0.85 0.19 165 / 0.5)" }}
             >
               <img
                 src="/evotree-logo.png"
@@ -42,25 +42,25 @@ export function Navbar() {
                 draggable={false}
               />
             </div>
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text font-display text-3xl font-bold tracking-tight text-transparent">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text font-display text-3xl font-black tracking-tighter text-transparent">
               EvoTree
             </span>
           </motion.div>
         </LinkNext>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-2">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <LinkNext key={link.label} href={link.href}>
-                <div className={`relative px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors duration-300 ${
-                  isActive ? "text-emerald-400" : "text-slate-400 hover:text-white"
+                <div className={`relative px-5 py-2.5 font-mono text-[13px] font-bold uppercase tracking-[0.25em] transition-all duration-300 ${
+                  isActive ? "text-emerald-400" : "text-slate-300 hover:text-white"
                 }`}>
                   {isActive && (
-                    <motion.span 
-                      layoutId="nav-glow"
-                      className="absolute inset-0 bg-emerald-500/5 blur-md px-4 rounded-lg"
+                    <motion.div 
+                      layoutId="nav-line"
+                      className="absolute bottom-0 left-5 right-5 h-0.5 bg-emerald-500 shadow-[0_0_10px_#10b981]"
                     />
                   )}
                   <span className="relative z-10">{link.label}</span>
