@@ -25,6 +25,7 @@
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^3.5.0",
+    "three": "^0.184.0",
     "viem": "^2.48.1",
     "wagmi": "^2.19.5"
   },
