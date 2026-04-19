@@ -49,18 +49,20 @@ export const Navbar = React.memo(function Navbar() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userWalletAddress: address, tokenId: 1 }),
+        body: JSON.stringify({ userWalletAddress: address, tokenId: 0 }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to sync root");
+        const errorData = await response.json();
+        throw new Error(errorData.detail || errorData.error || "Failed to sync root");
       }
 
       setMintStatus("success");
       setTimeout(() => setMintStatus("idle"), 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Sync root error:", error);
       setMintStatus("error");
+      alert(error.message);
       setTimeout(() => setMintStatus("idle"), 3000);
     }
   };
@@ -291,3 +293,5 @@ export const Navbar = React.memo(function Navbar() {
     </header>
   );
 });
+
+export default Navbar;

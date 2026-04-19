@@ -4,11 +4,11 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 import EvoTreeABI from '@/contracts/EvoTreeEcosystem.json'; // The ABI we copied
 
-// The address you just deployed!
-const CONTRACT_ADDRESS = '0x54b30187AfA10b03B9b2d6FfFC7b38EcD4Ce696b';
+// The EVM address of the EvoTree contract
+const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || '0x54b30187AfA10b03B9b2d6FfFC7b38EcD4Ce696b';
 
-// Sepolia Admin Key — set ADMIN_PRIVATE_KEY in .env.local for production!
-const ADMIN_PRIVATE_KEY = process.env.ADMIN_PRIVATE_KEY || '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+// Private key for the admin/issuer wallet
+const ADMIN_PRIVATE_KEY = process.env.ADMIN_PRIVATE_KEY;
 
 export async function POST(req: Request) {
   try {
@@ -19,11 +19,18 @@ export async function POST(req: Request) {
     }
 
     // 1. Setup the Admin Wallet Client
+    if (!ADMIN_PRIVATE_KEY) {
+      console.error("ADMIN_PRIVATE_KEY is not defined in environment variables.");
+      return NextResponse.json({ error: 'Server configuration error: Admin key missing' }, { status: 500 });
+    }
+
     const account = privateKeyToAccount(ADMIN_PRIVATE_KEY as `0x${string}`);
+    const rpcUrl = process.env.RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
+    
     const client = createWalletClient({
       account,
       chain: sepolia,
-      transport: http('https://ethereum-sepolia-rpc.publicnode.com'),
+      transport: http(rpcUrl),
     }).extend(publicActions);
 
     // 2. Simulate & Execute the Mint Transaction
@@ -45,10 +52,20 @@ export async function POST(req: Request) {
       txHash: hash 
     });
 
-  } catch (error) {
-    console.error('Minting Error:', error);
-    interface MintError extends Error { shortMessage?: string }
-    const errorMessage = error instanceof Error ? (error as MintError).shortMessage || error.message : 'Failed to mint token';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  } catch (error: any) {
+    console.error('Full Minting Error Details:', error);
+    
+    // Extract the most readable error message
+    let errorMessage = 'Failed to mint token';
+    if (error.shortMessage) {
+      errorMessage = error.shortMessage;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    return NextResponse.json({ 
+      error: errorMessage,
+      details: error.reason || null 
+    }, { status: 500 });
   }
 }

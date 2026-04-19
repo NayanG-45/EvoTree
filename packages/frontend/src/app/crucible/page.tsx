@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Share2, ArrowRight, CheckCircle2, Shield, Zap, RefreshCw } from "lucide-react";
+import { Loader2, Zap, RefreshCw, Sparkles, Activity, Cpu, GitBranch, CheckCircle, Shield, Share2, ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/evotree/Navbar";
+import { useAccount } from 'wagmi';
 
 type Step = "gateway" | "loading" | "trial" | "victory";
 type Subject = "React" | "Solidity" | "Python" | "JavaScript" | "TypeScript" | "Go" | "Rust" | "Bash";
@@ -26,6 +27,54 @@ export default function CruciblePage() {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [score, setScore] = useState(0);
+
+  // Minting State
+  const { address, isConnected } = useAccount();
+  const [isMinting, setIsMinting] = useState(false);
+  const [mintTxHash, setMintTxHash] = useState<string | null>(null);
+  const [mintError, setMintError] = useState<string | null>(null);
+
+  const getTokenId = (sub: Subject | null) => {
+    switch (sub) {
+      case "React": return 10;
+      case "Solidity": return 11;
+      case "Python": return 12;
+      default: return 10;
+    }
+  };
+
+  const handleMint = async () => {
+    if (!address || !isConnected) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+
+    setIsMinting(true);
+    setMintError(null);
+    try {
+      const tokenId = getTokenId(subject);
+      const response = await fetch('/api/mint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userWalletAddress: address,
+          tokenId: tokenId
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setMintTxHash(data.txHash);
+      } else {
+        throw new Error(data.error || "Minting failed");
+      }
+    } catch (err: any) {
+      console.error("Minting Error:", err);
+      setMintError(err.message);
+    } finally {
+      setIsMinting(false);
+    }
+  };
 
   const getQuestionCount = (diff: Difficulty) => {
     return diff === "Master" ? 10 : 5;
@@ -113,6 +162,8 @@ export default function CruciblePage() {
     setCurrentQIndex(0);
     setSelectedOption(null);
     setScore(0);
+    setMintTxHash(null);
+    setMintError(null);
   };
 
   return (
@@ -414,13 +465,47 @@ export default function CruciblePage() {
               </p>
 
               <div className="flex flex-col items-center gap-4 w-full justify-center max-w-md mt-6">
-                <button className="w-full px-8 py-4 rounded-xl bg-gradient-to-r from-[#9d4edd] to-[#00d4ff] text-white font-bold uppercase tracking-widest hover:shadow-[0_0_30px_rgba(157,78,221,0.4)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                  <CheckCircle2 className="w-5 h-5" /> Mint Relic To Tree
+                <button 
+                  onClick={handleMint}
+                  disabled={isMinting || !!mintTxHash}
+                  className="w-full px-8 py-4 rounded-xl bg-gradient-to-r from-[#9d4edd] to-[#00d4ff] text-white font-bold uppercase tracking-widest hover:shadow-[0_0_30px_rgba(157,78,221,0.4)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Sparkles className={`w-5 h-5 ${isMinting ? 'animate-spin' : ''}`} />
+                  {isMinting ? "FORGING..." : mintTxHash ? "RELIC FORGED" : "Mint Relic To Tree"}
                 </button>
                 <button onClick={resetCrucible} className="w-full px-8 py-4 rounded-xl border border-white/20 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
                   <RefreshCw className="w-5 h-5" /> Try Another Trial
                 </button>
               </div>
+
+              {mintTxHash && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center w-full max-w-md"
+                >
+                  <p className="text-emerald-400 font-mono text-[10px] uppercase tracking-widest mb-2">Relic Anchored to Blockchain</p>
+                  <a 
+                    href={`https://sepolia.etherscan.io/tx/${mintTxHash}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[9px] text-emerald-500/60 hover:text-emerald-400 break-all font-mono underline"
+                  >
+                    View: {mintTxHash}
+                  </a>
+                </motion.div>
+              )}
+
+              {mintError && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-center w-full max-w-md"
+                >
+                  <p className="text-red-400 font-mono text-[10px] uppercase tracking-widest mb-1">Neural Sync Failed</p>
+                  <p className="text-[9px] text-red-400/60 font-mono">{mintError}</p>
+                </motion.div>
+              )}
 
               <div className="flex items-center gap-6 mt-6">
                 <button className="text-[#00d4ff]/70 hover:text-[#00d4ff] font-mono text-xs uppercase tracking-widest transition-colors flex items-center gap-2 hover:bg-[#00d4ff]/10 px-4 py-2 rounded-lg">

@@ -5,7 +5,7 @@ import { Zap, Filter, Eye, EyeOff, Minus, Plus, RotateCcw, X } from "lucide-reac
 import { Particles } from "./Particles";
 import { Tree, NODES } from "./Tree";
 
-export function Canvas() {
+export function Canvas({ growthLevel = 1, stats = null }: { growthLevel?: number; stats?: any }) {
   const ref = useRef<HTMLDivElement>(null);
   const [mouse, setMouse] = useState({ x: 0.5, y: 0.5, px: 0, py: 0, inside: false });
   const [hovered, setHovered] = useState<string | null>(null);
@@ -27,8 +27,25 @@ export function Canvas() {
     setMouse({ x: px / r.width, y: py / r.height, px, py, inside: true });
   };
 
-  const hoveredNode = hovered ? NODES.find((n) => n.id === hovered) ?? null : null;
-  const selectedNode = selected ? NODES.find((n) => n.id === selected) ?? null : null;
+  const filteredNodes = useMemo(() => {
+    if (!stats) return NODES.filter(n => n.id === "genesis");
+    
+    return NODES.filter(n => {
+      if (n.id === "genesis" || n.id === "relic") return true; 
+      if (n.id === "github") return !!stats.github;
+      if (n.id === "leetcode") return !!stats.leetcode;
+      if (n.id === "codeforces") return !!stats.codeforces;
+      if (n.id === "kaggle") return !!stats.kaggle;
+      return false;
+    });
+  }, [stats]);
+
+  const categories = useMemo(() => {
+    return ["all", ...Array.from(new Set(filteredNodes.map((n) => n.category.split(" ")[0])))];
+  }, [filteredNodes]);
+
+  const hoveredNode = hovered ? filteredNodes.find((n) => n.id === hovered) ?? null : null;
+  const selectedNode = selected ? filteredNodes.find((n) => n.id === selected) ?? null : null;
 
   // Tooltip in pixel coords (clamped)
   const tooltipPos = (() => {
@@ -49,10 +66,6 @@ export function Canvas() {
     if (top < 12) top = py + 22;
     return { left, top };
   })();
-
-  const categories = useMemo(() => {
-    return ["all", ...Array.from(new Set(NODES.map((n) => n.category.split(" ")[0])))];
-  }, []);
 
   return (
     <div
@@ -205,6 +218,8 @@ export function Canvas() {
           onNodeClick={setSelected} 
           settings={{ showLabels, showActivity, filter: activeFilter }}
           mouse={mouse}
+          growthLevel={growthLevel}
+          nodes={filteredNodes}
         />
       </motion.div>
 
@@ -370,3 +385,5 @@ export function Canvas() {
     </div>
   );
 }
+
+export default Canvas;

@@ -26,15 +26,22 @@ const PATH_R2A = PATH_R1 + " Q660,190 650,150";
 const PATH_R2B = PATH_R1 + " Q720,240 780,230";
 
 export const NODES: SkillNode[] = [
-  { id: "solidity", label: "Solidity", level: 92, category: "Smart Contracts", x: 160, y: 130, color: "var(--bio-2)", path: PATH_L2A + " Q200,180 160,130" },
-  { id: "rust", label: "Rust", level: 86, category: "Systems", x: 280, y: 70, color: "var(--bio-1)", path: PATH_L2B + " Q320,100 280,70" },
-  { id: "zk", label: "ZK Proofs", level: 74, category: "Cryptography", x: 430, y: 40, color: "var(--bio-3)", path: PATH_L2B + " Q400,90 430,40" },
-  { id: "react", label: "React", level: 95, category: "Frontend", x: 580, y: 50, color: "var(--bio-5)", path: PATH_R2A + " Q610,100 580,50" },
-  { id: "graphql", label: "GraphQL", level: 81, category: "API", x: 720, y: 100, color: "var(--bio-4)", path: PATH_R2A + " Q690,120 720,100" },
-  { id: "ipfs", label: "IPFS", level: 68, category: "Storage", x: 850, y: 200, color: "var(--bio-2)", path: PATH_R2B + " Q820,210 850,200" },
-  { id: "evm", label: "EVM Internals", level: 78, category: "Runtime", x: 880, y: 360, color: "var(--bio-3)", path: PATH_R2B + " Q820,280 880,360" },
-  { id: "ml", label: "ML Ops", level: 64, category: "AI", x: 130, y: 320, color: "var(--bio-4)", path: PATH_L2A + " Q180,280 130,320" },
+  { id: "genesis", label: "Neural Core", level: 100, category: "Origin", x: 500, y: 380, color: "var(--bio-1)", path: TRUNK_PATH },
+  { id: "github", label: "Github Branch", level: 0, category: "Open Source", x: 160, y: 130, color: "var(--bio-2)", path: PATH_L2A + " Q200,180 160,130" },
+  { id: "leetcode", label: "LeetCode Vine", level: 0, category: "Algorithms", x: 280, y: 70, color: "var(--bio-3)", path: PATH_L2B + " Q320,100 280,70" },
+  { id: "codeforces", label: "Competitive Root", level: 0, category: "Competitive", x: 430, y: 40, color: "var(--bio-4)", path: PATH_L2B + " Q400,90 430,40" },
+  { id: "kaggle", label: "Data Node", level: 0, category: "AI/ML", x: 580, y: 50, color: "var(--bio-5)", path: PATH_R2A + " Q610,100 580,50" },
+  { id: "relic", label: "Relic #01", level: 100, category: "Milestone", x: 850, y: 200, color: "var(--bio-2)", path: PATH_R2B + " Q820,210 850,200" },
 ];
+
+export const TOKEN_MAP: Record<number, string> = {
+  0: "genesis",
+  1: "github",
+  2: "codeforces",
+  3: "leetcode",
+  4: "kaggle",
+  99: "relic"
+};
 
 // Smaller twigs branching off main lines for an organic fractal feel
 const TWIGS: { d: string; c: string; w?: number }[] = [
@@ -81,6 +88,8 @@ type Props = {
     filter: string;
   };
   mouse?: { x: number; y: number };
+  growthLevel?: number;
+  nodes?: SkillNode[];
 };
 
 function NodeParticles({ x, y, level, color, mouse }: { x: number; y: number; level: number; color: string, mouse?: { x: number, y: number } }) {
@@ -193,11 +202,23 @@ export function TreeCore() {
   );
 }
 
-export function Tree({ hovered, setHovered, onNodeClick, settings, mouse }: Props) {
+// Growth mapping: which elements appear at each stage
+const GROWTH_STAGES = {
+  1: { nodeCount: 2, twigs: false, leaves: false },
+  2: { nodeCount: 5, twigs: true, leaves: false },
+  3: { nodeCount: 8, twigs: true, leaves: true }
+};
+
+export function Tree({ hovered, setHovered, onNodeClick, settings, mouse, growthLevel = 1, nodes = NODES }: Props) {
   const showActivity = settings?.showActivity ?? true;
   const activeFilter = settings?.filter ?? "all";
 
-  const isVisible = (n: SkillNode) => {
+  const stage = (GROWTH_STAGES as any)[growthLevel] || GROWTH_STAGES[1];
+
+  const isVisible = (n: SkillNode, index: number) => {
+    // Check growth stage
+    if (index >= stage.nodeCount) return false;
+
     if (activeFilter === "all") return true;
     return n.category.toLowerCase().includes(activeFilter.toLowerCase());
   };
@@ -265,8 +286,8 @@ export function Tree({ hovered, setHovered, onNodeClick, settings, mouse }: Prop
       />
 
       {/* Branches */}
-      {NODES.map((n, i) => {
-        if (!isVisible(n)) return null;
+      {nodes.map((n, i) => {
+        if (!isVisible(n, i)) return null;
         const isHover = hovered === n.id;
         return (
           <g key={n.id}>
@@ -312,7 +333,7 @@ export function Tree({ hovered, setHovered, onNodeClick, settings, mouse }: Prop
       })}
 
       {/* Twigs (small organic offshoots) */}
-      {TWIGS.map((t, i) => (
+      {stage.twigs && TWIGS.map((t, i) => (
         <motion.path
           key={`twig-${i}`}
           d={t.d}
@@ -328,7 +349,7 @@ export function Tree({ hovered, setHovered, onNodeClick, settings, mouse }: Prop
       ))}
 
       {/* Leaves */}
-      {LEAVES.map((l, i) => (
+      {stage.leaves && LEAVES.map((l, i) => (
         <motion.circle
           key={i}
           cx={l.x}
@@ -343,8 +364,8 @@ export function Tree({ hovered, setHovered, onNodeClick, settings, mouse }: Prop
       ))}
 
       {/* Nodes */}
-      {NODES.map((n, i) => {
-        if (!isVisible(n)) return null;
+      {nodes.map((n, i) => {
+        if (!isVisible(n, i)) return null;
         const isHovered = hovered === n.id;
 
         // Proximity Bloom Logic

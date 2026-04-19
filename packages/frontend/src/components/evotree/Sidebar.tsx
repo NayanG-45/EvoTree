@@ -19,56 +19,43 @@ const stats = [
     desc: "Neural commit frequency is currently optimized. High affinity for Rust and Solidity patterns detected in recent epochs."
   },
   { 
-    id: "logic",
+    id: "leetcode",
     icon: Brain, 
-    label: "Algorithmic Logic", 
-    value: "94", 
-    unit: "score", 
-    trend: "3.1%", 
+    label: "LeetCode Vine", 
+    value: "0", 
+    unit: "solved", 
+    trend: "2.1%", 
     isUp: true, 
     color: "var(--bio-2)",
     glowColor: "6, 182, 212",
-    history: [88, 90, 89, 92, 91, 94, 94],
-    desc: "Logical synthesis reaching stable threshold. Complex pattern recognition in ZK circuits has increased by 14%."
+    history: [100, 105, 110, 115, 120, 125, 130],
+    desc: "Algorithmic proficiency is scaling. Neural pathways for dynamic programming and graph theory are strengthening."
   },
   { 
-    id: "compute",
-    icon: Cpu, 
-    label: "Compute Cycles", 
-    value: "8.2k", 
-    unit: "ops/s", 
-    trend: "0.8%", 
-    isUp: false, 
-    color: "var(--bio-3)",
-    glowColor: "71, 85, 105",
-    history: [85, 84, 86, 83, 84, 82, 82],
-    desc: "Computational overhead is stabilizing. Parallel thread execution is being redistributed to maximize spore yield."
-  },
-  { 
-    id: "network",
+    id: "codeforces",
     icon: Activity, 
-    label: "Network Pulse", 
-    value: "312", 
-    unit: "peers", 
-    trend: "22%", 
+    label: "Competitive Pulsar", 
+    value: "0", 
+    unit: "rating", 
+    trend: "0.0%", 
     isUp: true, 
     color: "var(--bio-4)",
     glowColor: "168, 85, 247",
-    history: [120, 150, 180, 240, 280, 290, 312],
-    desc: "P2P mesh density is expanding. Global sync status is currently at 99.8% across 14 geolocated neural clusters."
+    history: [1400, 1450, 1500, 1520, 1550, 1600, 1650],
+    desc: "High-pressure logical synthesis detected. System stability during competitive epochs is within optimal parameters."
   },
   { 
-    id: "yield",
+    id: "kaggle",
     icon: Sparkles, 
-    label: "Spore Yield", 
-    value: "47.9", 
-    unit: "ETH eq.", 
+    label: "Data Spores", 
+    value: "0", 
+    unit: "pts", 
     trend: "5.6%", 
     isUp: true, 
     color: "var(--bio-5)",
     glowColor: "234, 179, 8",
-    history: [38, 40, 42, 41, 44, 46, 47.9],
-    desc: "Estimated passive yield for the current cycle. Spore propagation is accelerating due to optimized smart contract logic."
+    history: [500, 520, 540, 560, 580, 600, 620],
+    desc: "Model convergence reaching stable threshold. Knowledge distillation from data clusters is proceeding."
   },
 ];
 
@@ -99,8 +86,31 @@ function Sparkline({ data, color }: { data: number[], color: string }) {
   );
 }
 
-export const Sidebar = React.memo(function Sidebar() {
+export const Sidebar = React.memo(function Sidebar({ stats: userStats = null }: { stats?: any }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+
+  const activeStats = React.useMemo(() => {
+    if (!userStats) return stats.filter(s => s.id === "github");
+
+    return stats.map(s => {
+      if (s.id === "github") {
+        return { ...s, value: userStats.github?.commits?.toLocaleString() || "0" };
+      }
+      if (s.id === "leetcode") {
+        if (!userStats.leetcode) return null;
+        return { ...s, value: userStats.leetcode?.totalSolved?.toString() || "0" };
+      }
+      if (s.id === "codeforces") {
+        if (!userStats.codeforces) return null;
+        return { ...s, value: userStats.codeforces?.currentRating?.toString() || "0" };
+      }
+      if (s.id === "kaggle") {
+        if (!userStats.kaggle) return null;
+        return { ...s, value: userStats.kaggle?.totalNotebooks?.toString() || "0", unit: "notebooks" };
+      }
+      return null;
+    }).filter(Boolean) as typeof stats;
+  }, [userStats]);
 
   return (
     <aside 
@@ -143,7 +153,7 @@ export const Sidebar = React.memo(function Sidebar() {
 
       {/* Stats */}
       <div className="flex flex-col gap-2.5">
-        {stats.map((s) => {
+        {activeStats.map((s) => {
           const isExpanded = expanded === s.id;
           return (
             <MagicCard
@@ -234,3 +244,5 @@ export const Sidebar = React.memo(function Sidebar() {
     </aside>
   );
 });
+
+export default Sidebar;
