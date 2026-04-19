@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Share2, ArrowRight, CheckCircle2, Shield, Zap, RefreshCw } from "lucide-react";
 import { Navbar } from "@/components/evotree/Navbar";
-import { Footer } from "@/components/evotree/Footer";
 
 type Step = "gateway" | "loading" | "trial" | "victory";
 type Subject = "React" | "Solidity" | "Python" | "JavaScript" | "TypeScript" | "Go" | "Rust" | "Bash";
@@ -411,7 +410,7 @@ export default function CruciblePage() {
               </motion.div>
 
               <p className="text-[#a0a0a0] italic mt-10 mb-8 max-w-md">
-                "Your knowledge has crystallized into a verifiable on-chain asset. Your EvoTree grows stronger."
+                &quot;Your knowledge has crystallized into a verifiable on-chain asset. Your EvoTree grows stronger.&quot;
               </p>
 
               <div className="flex flex-col items-center gap-4 w-full justify-center max-w-md mt-6">

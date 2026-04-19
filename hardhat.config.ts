@@ -1,8 +1,24 @@
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
-import { configVariable, defineConfig } from "hardhat/config";
+import hardhatIgnitionPlugin from "@nomicfoundation/hardhat-ignition";
+import { defineConfig } from "hardhat/config";
+import fs from "fs";
+import path from "path";
+
+// Read PRIVATE_KEY from .env without dotenv (avoids ERR_MODULE_NOT_FOUND)
+const envPath = path.resolve(process.cwd(), ".env");
+let myPrivateKey = "";
+
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf-8");
+  const keyMatch = envContent.match(/PRIVATE_KEY=["']?([^"'\r\n]+)["']?/);
+  if (keyMatch) {
+    myPrivateKey = keyMatch[1];
+  }
+}
 
 export default defineConfig({
-  plugins: [hardhatToolboxViemPlugin],
+  plugins: [hardhatToolboxViemPlugin, hardhatIgnitionPlugin],
+
   solidity: {
     profiles: {
       default: {
@@ -19,20 +35,12 @@ export default defineConfig({
       },
     },
   },
+
   networks: {
-    hardhatMainnet: {
-      type: "edr-simulated",
-      chainType: "l1",
-    },
-    hardhatOp: {
-      type: "edr-simulated",
-      chainType: "op",
-    },
     sepolia: {
       type: "http",
-      chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      url: "https://ethereum-sepolia-rpc.publicnode.com",
+      accounts: myPrivateKey ? [myPrivateKey] : [],
     },
   },
 });

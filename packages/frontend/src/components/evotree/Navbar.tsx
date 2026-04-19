@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LinkNext from "next/link";
 import { usePathname } from "next/navigation";
-import { Wallet, X, MoreVertical, Terminal } from "lucide-react";
+import { Wallet, X, MoreVertical, Terminal, CheckCircle, AlertCircle } from "lucide-react";
+import { useAccount } from "wagmi";
 
 const navLinks = [
   { label: "About", href: "/about" },
@@ -13,11 +14,12 @@ const navLinks = [
   { label: "Profile", href: "/profile" },
 ];
 
-export function Navbar() {
+export const Navbar = React.memo(function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [connected, setConnected] = useState(false);
+  const { address, isConnected } = useAccount();
   const [displayText, setDisplayText] = useState("");
+  const [mintStatus, setMintStatus] = useState<"idle" | "syncing" | "success" | "error">("idle");
   const targetText = "ESTABLISHING NEURAL LINK...";
   
   useEffect(() => {
@@ -32,7 +34,38 @@ export function Navbar() {
     return () => clearInterval(interval);
   }, []);
 
-  const shortAddress = "0x7a2f…b4e9";
+  const handleSyncRoot = async () => {
+    if (!isConnected || !address) {
+      setMintStatus("error");
+      alert("Wallet not connected. Please connect your wallet to sync root.");
+      setTimeout(() => setMintStatus("idle"), 3000);
+      return;
+    }
+
+    try {
+      setMintStatus("syncing");
+      const response = await fetch("/api/mint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userWalletAddress: address, tokenId: 1 }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to sync root");
+      }
+
+      setMintStatus("success");
+      setTimeout(() => setMintStatus("idle"), 3000);
+    } catch (error) {
+      console.error("Sync root error:", error);
+      setMintStatus("error");
+      setTimeout(() => setMintStatus("idle"), 3000);
+    }
+  };
+
+  const shortAddress = address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "";
 
   return (
     <header className="fixed top-0 z-[100] w-full border-b border-white/10 bg-black/85 backdrop-blur-xl">
@@ -69,17 +102,34 @@ export function Navbar() {
             const isActive = pathname === link.href;
             return (
               <LinkNext key={link.label} href={link.href}>
-                <div className={`relative px-5 py-2.5 font-mono text-[13px] font-bold uppercase tracking-[0.25em] transition-all duration-300 ${
-                  isActive ? "text-emerald-400" : "text-slate-300 hover:text-white"
-                }`}>
+                <motion.div 
+                  className="group relative px-5 py-2.5 font-mono text-[13px] font-bold uppercase tracking-[0.25em] transition-all duration-300"
+                  initial={false}
+                  whileHover="hover"
+                >
+                  <span className={`relative z-10 transition-colors duration-300 ${
+                    isActive ? "text-emerald-400" : "text-slate-300 group-hover:text-white"
+                  }`}>
+                    {link.label}
+                  </span>
+                  
                   {isActive && (
                     <motion.div 
                       layoutId="nav-line"
                       className="absolute bottom-0 left-5 right-5 h-0.5 bg-emerald-500 shadow-[0_0_10px_#10b981]"
                     />
                   )}
-                  <span className="relative z-10">{link.label}</span>
-                </div>
+
+                  <motion.div
+                    className="absolute bottom-0 left-5 right-5 h-0.5 bg-emerald-400"
+                    variants={{
+                      initial: { scaleX: 0, opacity: 0 },
+                      hover: { scaleX: 1, opacity: 1 }
+                    }}
+                    transition={{ duration: 0.2 }}
+                    initial="initial"
+                  />
+                </motion.div>
               </LinkNext>
             );
           })}
@@ -98,11 +148,12 @@ export function Navbar() {
              </div>
              
              <button 
-               onClick={() => setConnected(!connected)}
-               className="group relative flex items-center gap-3 px-7 py-3 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(0,212,255,0.15)] transition-all duration-300 active:scale-95"
+               onClick={handleSyncRoot}
+               disabled={mintStatus === "syncing"}
+               className="group relative flex items-center gap-3 px-7 py-3 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all duration-300 active:scale-95 disabled:opacity-50"
              >
                 {/* Advanced Gradient & Pulse */}
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600 group-hover:scale-110 transition-transform duration-500" />
+                <div className={`absolute inset-0 bg-gradient-to-r ${mintStatus === 'error' ? 'from-red-600 to-orange-600' : 'from-emerald-600 via-cyan-600 to-blue-600'} group-hover:scale-110 transition-transform duration-500`} />
                 <motion.div 
                    animate={{ opacity: [0, 0.2, 0] }}
                    transition={{ duration: 2, repeat: Infinity }}
@@ -110,10 +161,23 @@ export function Navbar() {
                 />
                 
                 {/* Content */}
-                <Wallet className="relative z-10 w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
-                <span className="relative z-10 font-display font-black text-[11px] uppercase tracking-[0.2em] text-white">
-                   {connected ? shortAddress : "Plant Neural Seed"}
-                </span>
+                <div className="relative z-10 flex items-center gap-2">
+                  {mintStatus === "syncing" ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  ) : mintStatus === "success" ? (
+                    <CheckCircle className="w-4 h-4 text-white" />
+                  ) : mintStatus === "error" ? (
+                    <AlertCircle className="w-4 h-4 text-white" />
+                  ) : (
+                    <Wallet className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
+                  )}
+                  <span className="font-display font-black text-[11px] uppercase tracking-[0.2em] text-white">
+                     {mintStatus === "syncing" ? "Syncing..." : 
+                      mintStatus === "success" ? "Success!" : 
+                      isConnected ? (mintStatus === "error" ? "Retry Sync" : shortAddress) : 
+                      "Plant Neural Seed"}
+                  </span>
+                </div>
              </button>
           </div>
 
@@ -190,16 +254,31 @@ export function Navbar() {
               <div className="mt-auto">
                   <button 
                     onClick={() => {
-                      setConnected(!connected);
-                      setMobileMenuOpen(false);
+                      handleSyncRoot();
+                      if (isConnected && mintStatus === 'success') setMobileMenuOpen(false);
                     }}
-                    className="group relative w-full flex items-center justify-center gap-4 px-8 py-6 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 shadow-[0_15px_40px_rgba(16,185,129,0.3)]"
+                    disabled={mintStatus === "syncing"}
+                    className="group relative w-full flex items-center justify-center gap-4 px-8 py-6 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 shadow-[0_15px_40px_rgba(16,185,129,0.3)] disabled:opacity-50"
                   >
-                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600" />
-                     <Wallet className="relative z-10 w-5 h-5 text-white" />
-                     <span className="relative z-10 font-display font-black text-sm uppercase tracking-[0.2em] text-white">
-                        {connected ? "DISCONNECT LINK" : "PLANT NEURAL SEED"}
-                     </span>
+                     <div className={`absolute inset-0 bg-gradient-to-r ${mintStatus === 'error' ? 'from-red-600 to-orange-600' : 'from-emerald-600 via-cyan-600 to-blue-600'}`} />
+                     
+                     <div className="relative z-10 flex items-center gap-3">
+                        {mintStatus === "syncing" ? (
+                          <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        ) : mintStatus === "success" ? (
+                          <CheckCircle className="w-5 h-5 text-white" />
+                        ) : mintStatus === "error" ? (
+                          <AlertCircle className="w-5 h-5 text-white" />
+                        ) : (
+                          <Wallet className="w-5 h-5 text-white" />
+                        )}
+                        <span className="font-display font-black text-sm uppercase tracking-[0.2em] text-white">
+                           {mintStatus === "syncing" ? "Syncing..." : 
+                            mintStatus === "success" ? "Success!" : 
+                            isConnected ? (mintStatus === "error" ? "Retry Sync" : "Sync Neural Root") : 
+                            "Plant Neural Seed"}
+                        </span>
+                     </div>
                   </button>
                  <p className="mt-6 text-center text-[10px] uppercase tracking-[0.3em] text-slate-600 font-mono">
                    EvoTree Protocol v1.0
@@ -211,4 +290,4 @@ export function Navbar() {
       </AnimatePresence>
     </header>
   );
-}
+});
